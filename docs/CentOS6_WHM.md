@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image CentOS6-DirectAdmin với QEMU Guest Agent + cloud-init
+# Hướng dẫn đóng image CentOS6 WHM với QEMU Guest Agent + cloud-init
 
 ## Chú ý:
 
@@ -12,9 +12,9 @@
 ## Bước 1: Tạo máy ảo CentOS6 bằng kvm 
 
 ``` 
-# CentOS6 DA
-qemu-img create -f qcow2 /tmp/centos63.qcow2 10G
-virt-install --virt-type kvm --name centos63 --ram 2048   --disk /tmp/centos63.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
+# CentOS6 Blank
+qemu-img create -f qcow2 /tmp/centos64.qcow2 10G
+virt-install --virt-type kvm --name centos64 --ram 2048   --disk /tmp/centos64.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
 ```
 
 > **Một số lưu ý trong quá trình cài đặt**
@@ -28,7 +28,7 @@ virt-install --virt-type kvm --name centos63 --ram 2048   --disk /tmp/centos63.q
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -49,6 +49,12 @@ với `centos*` là tên máy ảo
 
 - Bật máy ảo lên
 
+- Cài đặt epel-release & Update 
+```
+yum install epel-release -y
+yum update -y
+```
+
 - Stop firewalld Disable Selinux (Tùy trường hợp, Bản đang cài để nguyên toàn bộ ko disable)
 
 ``` sh
@@ -57,14 +63,10 @@ chkconfig iptables off
 iptables -F
 iptables -X
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
 init 6
-```
-
-- Cài đặt epel-release & Update 
-```
-yum install epel-release -y
-yum update -y
 ```
 
 - Disable IPv6
@@ -84,22 +86,6 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Cài đặt WHM
-
-``` sh
-# Sử dụng screen để cài đặt 
-screen -S WHM
-
-
-
-# Để thoát màn hình screen
-Ctrl + A + D
-# Để login lại màn hình screen cài đặt DA 
-screen -rd WHM
-```
-
-==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
-
 ## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cấu hình network 
@@ -109,7 +95,7 @@ screen -rd WHM
 sed -i 's|ONBOOT=no|ONBOOT=yes|g' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # Xóa `HWADDR` và UUID trong config
-rm -f /etc/udev/rules.d/70-persistent-net.rules
+# rm -f /etc/udev/rules.d/70-persistent-net.rules
 sed -i '/UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 sed -i '/HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 ```
@@ -143,8 +129,9 @@ sed -i 's/name: centos/name: root/g' /etc/cloud/cloud.cfg
 
 ``` sh 
 yum install netplug wget  -y
-wget netplug/netplug_centos6 -O netplug
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_centos6 -O netplug
 # Đưa file vào `/etc/netplug`
+rm -rf /etc/netplug.d/netplug
 mv netplug /etc/netplug.d/netplug
 chmod +x /etc/netplug.d/netplug
 ```
@@ -178,7 +165,6 @@ service qemu-ga start
 
 ``` sh 
 yum clean all
-rm -rf /tmp/*
 # Xóa last logged
 rm -f /var/log/wtmp /var/log/btmp
 # Xóa history 
@@ -190,17 +176,18 @@ history -c
 ``` sh 
 poweroff
 ```
+
 ## Bước 5: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details
-virt-sysprep -d centos63
+virt-sysprep -d centos64
 
 # Undefine the libvirt domain
-virsh undefine centos63
+virsh undefine centos64
 
 # Giảm kích thước image
-virt-sparsify --compress /tmp/centos63.qcow2 CentOS6-64bit-WHM-2018.img
+virt-sparsify --compress /tmp/centos64.qcow2 CentOS6-64bit-WHM-2018.img
 ```
 
 > **Lưu ý:**
@@ -212,10 +199,10 @@ virt-sparsify --compress /tmp/centos63.qcow2 CentOS6-64bit-WHM-2018.img
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
 ``` sh
-glance image-create --name CentOS6-64bit-WHM-2018 \
+glance image-create --name CentOS6-64bit-2018 \
 --disk-format qcow2 \
 --container-format bare \
---file /root/CentOS6-64bit-WHM-2018.img \
+--file /root/CentOS6-64bit-2018.img \
 --visibility=public \
 --property hw_qemu_guest_agent=yes \
 --progress

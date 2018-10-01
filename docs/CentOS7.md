@@ -177,7 +177,6 @@ rm -f /etc/hostname
 
 ``` sh 
 yum clean all
-# rm -rf /tmp/*
 # Xóa last logged
 rm -f /var/log/wtmp /var/log/btmp
 # Xóa history 

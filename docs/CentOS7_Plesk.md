@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image CentOS7-Plesk với QEMU Guest Agent + cloud-init
+# Hướng dẫn đóng image CentOS7 Plesk với QEMU Guest Agent + cloud-init
 
 ## Chú ý:
 
@@ -12,23 +12,23 @@
 ## Bước 1: Tạo máy ảo CentOS7 bằng kvm 
 
 ``` 
-# CentOS7 Flesk
-qemu-img create -f qcow2 /tmp/centos74.qcow2 10G
-virt-install --virt-type kvm --name centos74 --ram 2048   --disk /tmp/centos74.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
+# CentOS7 Blank
+qemu-img create -f qcow2 /tmp/centos73.qcow2 10G
+virt-install --virt-type kvm --name centos73 --ram 2048   --disk /tmp/centos73.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
 ```
 
 > **Một số lưu ý trong quá trình cài đặt**
 > 
 > - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
 > 
-> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng /
+> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng 
 
 
 ## Bước 2: Xử lí trên KVM host 
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -49,6 +49,17 @@ với `centos*` là tên máy ảo
 
 - Bật máy ảo lên
 
+- Cài đặt epel-release & Update 
+```
+yum install epel-release -y
+yum update -y
+# Bỏ qua `epel/x86_64/updateinfo         FAILED` bằng cách
+mv /etc/yum.repos.d/epel-testing.repo .
+yum update -y
+mv epel-testing.repo /etc/yum.repos.d/
+yum update -y 
+```
+
 - Stop firewalld Disable Selinux
 
 ``` sh
@@ -59,21 +70,10 @@ sudo systemctl stop NetworkManager
 sudo systemctl enable network
 sudo systemctl start network
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
 init 6
-```
-
-- Update file `dhclient-script`
-```sh
-rm -rf /usr/sbin/dhclient-script
-wget ... -O /usr/sbin/dhclient-script
-chmod +x /usr/sbin/dhclient-script
-```
-
-- Cài đặt epel-release & Update 
-```
-yum install epel-release -y
-yum update -y
 ```
 
 - Disable IPv6
@@ -83,7 +83,20 @@ echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-- Cài đặt các packet cần thiết 
+- Update file `dhclient-script`
+```sh
+rm -rf /usr/sbin/dhclient-script
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/dhclient-script -O /usr/sbin/dhclient-script
+chmod +x /usr/sbin/dhclient-script
+```
+
+- Option ssh ipv4
+```sh
+sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config 
+systemctl restart sshd 
+```
+
+- Cài đặt các packet cần thiết (Cho)
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
@@ -93,52 +106,49 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Cài đặt Plesk
+## Bước 4: Cài đặt Plesk 
 
-``` sh
+Cài đặt 
+```sh
 # Sử dụng screen để cài đặt 
 screen -S Plesk
 
-echo '[mariadb]
-name = MariaDB
-baseurl = http://yum.mariadb.org/10.2/centos7-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
-yum update -y 
+
 
 # Để thoát màn hình screen
 Ctrl + A + D
+
 # Để login lại màn hình screen cài đặt DA 
 screen -rd Plesk
 
+# Sau khi cài đặt xong xóa file cài đặt
+rm -rf latest installer.lock
+
+```
+
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
-
-- Xóa file cài đặt 
-
-``` sh 
-rm -rf latest installer.lock
-```
+## Bước 5: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cài đặt acpid nhằm cho phép hypervisor có thể reboot hoặc shutdown instance.
 
 ``` sh 
-yum install acpid
+yum install acpid -y
 systemctl enable acpid
 ```
 
-- Cài đặt qemu guest agent, cloud-init và cloud-utils:
-
-``` sh
-yum install qemu-guest-agent cloud-init cloud-utils -y
-```
-
-- Kích hoạt và khởi động qemu-guest-agent service
+- Cài đặt qemu guest agent, kích hoạt và khởi động qemu-guest-agent service
 
 ``` sh 
+yum install -y qemu-guest-agent
 systemctl enable qemu-guest-agent.service
 systemctl start qemu-guest-agent.service
+```
+
+- Cài đặt cloud-init và cloud-utils:
+
+``` sh
+yum install -y cloud-init cloud-utils
 ```
 
 > **Lưu ý:**
@@ -185,30 +195,40 @@ rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
 rm -f /etc/hostname
 ```
 
+- Clean all 
+
+``` sh 
+yum clean all
+# Xóa last logged
+rm -f /var/log/wtmp /var/log/btmp
+# Xóa history 
+history -c
+```
+
 - Tắt VM 
 
 ```
 poweroff
 ```
 
-## Bước 5: Xử lý image trên KVM host
+## Bước 6: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details
-virt-sysprep -d centos74
+virt-sysprep -d centos73
 
 # Undefine the libvirt domain
-virsh undefine centos74
+virsh undefine centos73
 
 # Giảm kích thước image
-virt-sparsify --compress /tmp/centos74.qcow2 CentOS7-64bit-Plesk-2018.img
+virt-sparsify --compress /tmp/centos73.qcow2 CentOS7-64bit-Plesk-2018.img
 ```
 
 > **Lưu ý:**
 > 
 > Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 6: Upload image lên glance
+## Bước 7: Upload image lên glance
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
@@ -223,6 +243,7 @@ glance image-create --name CentOS7-64bit-Plesk-2018 \
 ```
 
 - Image đã sẵn sàng để launch máy ảo.
+
 
 **Link tham khảo**
 

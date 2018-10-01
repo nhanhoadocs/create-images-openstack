@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image CentOS7-DirectAdmin với QEMU Guest Agent + cloud-init
+# Hướng dẫn đóng image CentOS7 DirectAdmin với QEMU Guest Agent + cloud-init
 
 ## Chú ý:
 
@@ -21,14 +21,14 @@ virt-install --virt-type kvm --name centos72 --ram 2048   --disk /tmp/centos72.q
 > 
 > - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
 > 
-> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng /
+> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng 
 
 
 ## Bước 2: Xử lí trên KVM host 
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -49,6 +49,17 @@ với `centos*` là tên máy ảo
 
 - Bật máy ảo lên
 
+- Cài đặt epel-release & Update 
+```
+yum install epel-release -y
+yum update -y
+# Bỏ qua `epel/x86_64/updateinfo         FAILED` bằng cách
+mv /etc/yum.repos.d/epel-testing.repo .
+yum update -y
+mv epel-testing.repo /etc/yum.repos.d/
+yum update -y 
+```
+
 - Stop firewalld Disable Selinux
 
 ``` sh
@@ -59,21 +70,10 @@ sudo systemctl stop NetworkManager
 sudo systemctl enable network
 sudo systemctl start network
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
 init 6
-```
-
-- Cài đặt epel-release & Update 
-```
-yum install epel-release -y
-yum update -y
-```
-
-- Update file `dhclient-script`
-```sh
-rm -rf /usr/sbin/dhclient-script
-wget ... -O /usr/sbin/dhclient-script
-chmod +x /usr/sbin/dhclient-script
 ```
 
 - Disable IPv6
@@ -83,7 +83,20 @@ echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-- Cài đặt các packet cần thiết 
+- Update file `dhclient-script`
+```sh
+rm -rf /usr/sbin/dhclient-script
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/dhclient-script -O /usr/sbin/dhclient-script
+chmod +x /usr/sbin/dhclient-script
+```
+
+- Option ssh ipv4
+```sh
+sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config 
+systemctl restart sshd 
+```
+
+- Cài đặt các packet cần thiết (Cho)
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
@@ -93,9 +106,10 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Cài đặt DA
+## Bước 4: Cài đặt cấu hình DA
 
-``` sh
+4.1 Cài đặt DA
+```
 # Sử dụng screen để cài đặt 
 screen -S DA
 
@@ -118,23 +132,32 @@ Ctrl + A + D
 screen -rd DA
 ```
 
-Chỉnh lại `named.conf` services để tránh trường hợp VPS được cài đặt từ template ko start được `named`
+4.2 Cấu hình DA
 
-``` sh 
-sed -i 's|zone "localhost.localdomain" { type master; file "/var/named/localhost.localdomain.db"; };|#zone "localhost.localdomain" { type master; file "/var/named/localhost.localdomain.db"; };|g' /etc/named.conf
+Sau khi cài đặt DA tiến hành cấu hình cho DA trước khi đóng Template
+- Chuyển PHP version vể 5.6 
 ```
 
-VM cài đặt xong DA, toàn bộ thông tin tại khoản được lưu trữ ở `/usr/local/directadmin/scripts/setup.txt`
+```
+
+- Security DA
+```
+
+```
+
+- Chỉnh cấu hình DA
+```
+
+```
+
+- Create Secure /tmp cho DA
+```
+
+```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
-
-- Xóa file cài đặt 
-
-``` sh 
-rm -rf latest
-```
+## Bước 5: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cài đặt acpid nhằm cho phép hypervisor có thể reboot hoặc shutdown instance.
 
@@ -143,17 +166,18 @@ yum install acpid -y
 systemctl enable acpid
 ```
 
-- Cài đặt qemu guest agent, cloud-init và cloud-utils:
-
-``` sh
-yum install qemu-guest-agent cloud-init cloud-utils -y
-```
-
-- Kích hoạt và khởi động qemu-guest-agent service
+- Cài đặt qemu guest agent, kích hoạt và khởi động qemu-guest-agent service
 
 ``` sh 
+yum install -y qemu-guest-agent
 systemctl enable qemu-guest-agent.service
 systemctl start qemu-guest-agent.service
+```
+
+- Cài đặt cloud-init và cloud-utils:
+
+``` sh
+yum install -y cloud-init cloud-utils
 ```
 
 > **Lưu ý:**
@@ -200,13 +224,23 @@ rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
 rm -f /etc/hostname
 ```
 
+- Clean all 
+
+``` sh 
+yum clean all
+# Xóa last logged
+rm -f /var/log/wtmp /var/log/btmp
+# Xóa history 
+history -c
+```
+
 - Tắt VM 
 
 ```
 poweroff
 ```
 
-## Bước 5: Xử lý image trên KVM host
+## Bước 6: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details
@@ -247,3 +281,5 @@ http://openstack-xenserver.readthedocs.io/en/latest/24-create-kvm-centos-7-image
 https://docs.openstack.org/image-guide/centos-image.html
 
 https://access.redhat.com/solutions/732773
+
+https://help.directadmin.com/item.php?id=247

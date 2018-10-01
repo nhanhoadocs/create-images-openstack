@@ -1,30 +1,3 @@
-# Các Template cần đóng 
-
-CentOS Linux (Dung lượng disk tối thiểu 10G)
-- 1 - CentOS6-64bit-2018
-- 2 - CentOS7-64bit-2018
-- 3 - CentOS6-64bit-DA-2018
-- 4 - CentOS7-64bit-DA-2018
-- 5 - CentOS7-64bit-WHM-2018
-- 6 - CentOS6-64bit-WHM-2018
-(Có thể có Template Plesk)
-
-Ubuntu Linux (Dung lượng disk tối thiểu 10G)
-- 1 - Ubuntu14-64bit-2018
-- 2 - Ubuntu14-64bit-DA-2018
-- 3 - Ubuntu16-64bit-2018
-- 4 - Ubuntu16-64bit-DA-2018
-- 5 - Ubuntu18-64bit-2018
-- 6 - Ubuntu18-64bit-DA-2018
-
-Windows2k8 Enterprise (Dung lượng disk tối thiểu 25G)
-- 1 - Windows-2008-64bit-2018
-- 2 - Windows-2008-64bit-Plesk-2018
-
-Windows2k12 Standard (Dung lượng disk tối thiểu 25G)
-- 1 - Windows-2012-64bit-2018
-- 2 - Windows-2012-64bit-Plesk-2018
-
 # Chuẩn bị Server cho việc đóng images OpenStack 
 
 Môi trường chuẩn bị:
@@ -129,6 +102,7 @@ Cài libguestfs-tools để xử lý file `.qcow2` thành file `.img` sau khi c�
 ```
 yum install libguestfs-tools -y
 ```
+
 
 Copy images vào folder (Có thể lấy trên Server 172.16.4.51)
 ```

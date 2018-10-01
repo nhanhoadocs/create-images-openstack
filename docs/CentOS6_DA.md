@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image CentOS6-DirectAdmin với QEMU Guest Agent + cloud-init
+# Hướng dẫn đóng image CentOS6 DirectAdmin với QEMU Guest Agent + cloud-init
 
 ## Chú ý:
 
@@ -12,7 +12,7 @@
 ## Bước 1: Tạo máy ảo CentOS6 bằng kvm 
 
 ``` 
-# CentOS6 DA
+# CentOS6 Blank
 qemu-img create -f qcow2 /tmp/centos62.qcow2 10G
 virt-install --virt-type kvm --name centos62 --ram 2048   --disk /tmp/centos62.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
 ```
@@ -28,7 +28,7 @@ virt-install --virt-type kvm --name centos62 --ram 2048   --disk /tmp/centos62.q
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -49,6 +49,12 @@ với `centos*` là tên máy ảo
 
 - Bật máy ảo lên
 
+- Cài đặt epel-release & Update 
+```
+yum install epel-release -y
+yum update -y
+```
+
 - Stop firewalld Disable Selinux (Tùy trường hợp, Bản đang cài để nguyên toàn bộ ko disable)
 
 ``` sh
@@ -57,14 +63,10 @@ chkconfig iptables off
 iptables -F
 iptables -X
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
 init 6
-```
-
-- Cài đặt epel-release & Update 
-```
-yum install epel-release -y
-yum update -y
 ```
 
 - Disable IPv6
@@ -84,9 +86,11 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Cài đặt DA
 
-``` sh
+## Bước 4: Cài đặt cấu hình DA
+
+4.1 Cài đặt DA
+```
 # Sử dụng screen để cài đặt 
 screen -S DA
 
@@ -109,9 +113,33 @@ Ctrl + A + D
 screen -rd DA
 ```
 
+4.2 Cấu hình DA
+
+Sau khi cài đặt DA tiến hành cấu hình cho DA trước khi đóng Template
+
+- Chuyển PHP version vể 5.6 
+```
+
+```
+
+- Security DA
+```
+
+```
+
+- Chỉnh cấu hình DA
+```
+
+```
+
+- Create Secure /tmp cho DA
+```
+
+```
+
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
+## Bước 5: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cấu hình network 
 
@@ -120,7 +148,7 @@ screen -rd DA
 sed -i 's|ONBOOT=no|ONBOOT=yes|g' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # Xóa `HWADDR` và UUID trong config
-rm -f /etc/udev/rules.d/70-persistent-net.rules
+# rm -f /etc/udev/rules.d/70-persistent-net.rules
 sed -i '/UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 sed -i '/HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 ```
@@ -154,8 +182,9 @@ sed -i 's/name: centos/name: root/g' /etc/cloud/cloud.cfg
 
 ``` sh 
 yum install netplug wget  -y
-wget netplug/netplug_centos6 -O netplug
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_centos6 -O netplug
 # Đưa file vào `/etc/netplug`
+rm -rf /etc/netplug.d/netplug
 mv netplug /etc/netplug.d/netplug
 chmod +x /etc/netplug.d/netplug
 ```
@@ -189,7 +218,6 @@ service qemu-ga start
 
 ``` sh 
 yum clean all
-rm -rf /tmp/*
 # Xóa last logged
 rm -f /var/log/wtmp /var/log/btmp
 # Xóa history 
@@ -201,7 +229,8 @@ history -c
 ``` sh 
 poweroff
 ```
-## Bước 5: Xử lý image trên KVM host
+
+## Bước 6: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details
@@ -242,3 +271,5 @@ http://openstack-xenserver.readthedocs.io/en/latest/24-create-kvm-centos-7-image
 https://docs.openstack.org/image-guide/centos-image.html
 
 https://access.redhat.com/solutions/732773
+
+https://help.directadmin.com/item.php?id=247

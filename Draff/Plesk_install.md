@@ -8,6 +8,7 @@ Các bước cài đặt và đóng Images
 - Mở Remote Desktop 
 - Cài đặt Plesk 
 - Cài đặt MSSQL 2k12 
+- Trên Plesk kết nối MSSQL
 - Đóng Images
 
 # Bước 1: Cài đặt Windows Server 2k12r2 trên KVM node.
