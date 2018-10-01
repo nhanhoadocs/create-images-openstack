@@ -28,7 +28,7 @@ virt-install --virt-type kvm --name centos61 --ram 2048   --disk /tmp/centos61.q
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -129,8 +129,9 @@ sed -i 's/name: centos/name: root/g' /etc/cloud/cloud.cfg
 
 ``` sh 
 yum install netplug wget  -y
-wget netplug/netplug_centos6 -O netplug
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_centos6 -O netplug
 # Đưa file vào `/etc/netplug`
+rm -rf /etc/netplug.d/netplug
 mv netplug /etc/netplug.d/netplug
 chmod +x /etc/netplug.d/netplug
 ```

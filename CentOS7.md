@@ -28,7 +28,7 @@ virt-install --virt-type kvm --name centos71 --ram 2048   --disk /tmp/centos71.q
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
 `virsh edit centos`
 
@@ -86,7 +86,7 @@ sysctl -p
 - Update file `dhclient-script`
 ```sh
 rm -rf /usr/sbin/dhclient-script
-wget ... -O /usr/sbin/dhclient-script
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/dhclient-script -O /usr/sbin/dhclient-script
 chmod +x /usr/sbin/dhclient-script
 ```
 
@@ -96,7 +96,7 @@ sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 systemctl restart sshd 
 ```
 
-- Cài đặt các packet cần thiết 
+- Cài đặt các packet cần thiết (Cho)
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
@@ -115,17 +115,18 @@ yum install acpid -y
 systemctl enable acpid
 ```
 
-- Cài đặt qemu guest agent, cloud-init và cloud-utils:
-
-``` sh
-yum install qemu-guest-agent cloud-init cloud-utils -y
-```
-
-- Kích hoạt và khởi động qemu-guest-agent service
+- Cài đặt qemu guest agent, kích hoạt và khởi động qemu-guest-agent service
 
 ``` sh 
+yum install -y qemu-guest-agent
 systemctl enable qemu-guest-agent.service
 systemctl start qemu-guest-agent.service
+```
+
+- Cài đặt cloud-init và cloud-utils:
+
+``` sh
+yum install -y cloud-init cloud-utils
 ```
 
 > **Lưu ý:**

@@ -20,6 +20,7 @@ systemctl enable acpid
 Mục đích: Là 1 agent chạy phí trong VM cho phép hypervisor OpenStack có thể tương tác với VM thực hiện các lệnh của ACPI như `reboot`, `shutdown` ...
 
 ``` sh 
+yum install -y qemu-guest-agent
 systemctl enable qemu-guest-agent.service
 systemctl start qemu-guest-agent.service
 ```
@@ -29,7 +30,7 @@ systemctl start qemu-guest-agent.service
 Mục đích: Cloud-init cung cấp tiện ích đặt password, reset password khi chuyển dịch lên hệ thống Cloud365 OpenStack của Nhân Hòa
 
 ``` sh
-yum install qemu-guest-agent cloud-init cloud-utils -y
+yum install cloud-init cloud-utils -y
 ```
 
 Để máy ảo trên OpenStack có thể nhận được Cloud-init cần thay đổi cấu hình mặc định bằng cách sửa đổi file `/etc/cloud/cloud.cfg`. 

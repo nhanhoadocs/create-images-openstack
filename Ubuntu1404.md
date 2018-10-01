@@ -17,14 +17,14 @@ Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy �
 Ở đây mình sử dụng virt-install
 
 ``` sh
-qemu-img create -f qcow2 /tmp/trusty.qcow2 10G
+qemu-img create -f qcow2 /tmp/ubuntu14.qcow2 10G
 
-virt-install --virt-type kvm --name trusty --ram 1024 \
+virt-install --virt-type kvm --name ubuntu14 --ram 1024 \
   --cdrom=/var/lib/libvirt/images/ubuntu-14.04.4-server-amd64.iso \
-  --disk /tmp/trusty.qcow2,format=qcow2 \
+  --disk /tmp/ubuntu14.qcow2,format=qcow2 \
   --network bridge=br0 \
   --graphics vnc,listen=0.0.0.0 --noautoconsole \
-  --os-type=linux --os-variant=ubuntutrusty
+  --os-type=linux --os-variant=ubuntu14.04
 ```
 
 **Một số lưu ý trong quá trình cài đặt**
@@ -50,9 +50,9 @@ Lưu ý: Có một số trường hợp đối với ubuntu14.04, máy ảo sẽ
 
 - Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent), sau đó save lại
 
-`virsh edit trusty`
+`virsh edit ubuntu14`
 
-với `trusty` là tên máy ảo
+với `ubuntu14` là tên máy ảo
 
 ``` sh
 ...
@@ -208,15 +208,15 @@ Bước 13 chỉ cần thực hiện ở lần đóng image đầu tiên.
 
 ## Bước 14: Clean up image
 
-`virt-sysprep -d trusty`
+`virt-sysprep -d ubuntu14`
 
 ## Bước 15: Undefine libvirt domain
 
-`virsh undefine trusty`
+`virsh undefine ubuntu14`
 
 ## Bước 16: Giảm kích thước máy ảo
 
-`virt-sparsify --compress /tmp/trusty.qcow2 /root/trusty.img`
+`virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img`
 
 **Lưu ý:**
 
@@ -241,91 +241,6 @@ glance image-create --name Ubuntu14-64bit-2018 \
 <img src="https://i.imgur.com/RxeuiFr.png">
 
 <img src="https://i.imgur.com/whh1wh0.png">
-
-**Lưu ý:**
-
-Đối với các image của Windows, bạn cần thêm metadata `os_type = windows`
-
-
-- Image đã sẵn sàng để launch máy ảo.
-
-## Hướng dẫn thay đổi password
-
-### Cách 1: sử dụng nova API (lưu ý máy ảo phải đang bật)
-
-Trên node Controller, thực hiện lệnh và nhập password cần đổi
-
-``` sh
-root@controller:# nova set-password thaonv
-New password:
-Again:
-```
-
-với `thaonv` là tên máy ảo
-
-### Cách 2: sử dụng trực tiếp libvirt
-
-Xác định vị trí máy ảo đang nằm trên node compute nào. VD máy ảo đang sử dụng là thaonv
-
-`root@controller:# nova show thaonv`
-
-Kết quả:
-
-``` sh
-+--------------------------------------+----------------------------------------------------------+
-| Property                             | Value                                                    |
-+--------------------------------------+----------------------------------------------------------+
-| OS-DCF:diskConfig                    | AUTO                                                     |
-| OS-EXT-AZ:availability_zone          | nova                                                     |
-| OS-EXT-SRV-ATTR:host                 | compute1                                                 |
-| OS-EXT-SRV-ATTR:hostname             | thaonv                                                   |
-| OS-EXT-SRV-ATTR:hypervisor_hostname  | compute1                                                 |
-| OS-EXT-SRV-ATTR:instance_name        | instance-0000000d                                        |
-```
-
-Như vậy máy ảo nằm trên node compute1 với KVM name là `instance-0000000d`
-
-Kiểm tra trên máy compute1 để tìm file socket kết nối tới máy ảo
-
-`bash -c  "ls /var/lib/libvirt/qemu/*.sock"`
-
-Kết quả:
-
-`/var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-0000000d.sock`
-
-instance-0000000d: tên của máy ảo trên KVM
-
-`file /var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-0000000d.sock`
-
-Kết quả:
-
-`/var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-0000000d.sock: socket`
-
-Kiểm tra kết nối tới máy ảo
-
-`virsh qemu-agent-command instance-0000000d '{"execute":"guest-ping"}'`
-
-Kết quả:
-
-`{"return":{}}`
-
-Sinh password mới `thaodeptrai`
-
-`echo -n "thaodeptrai" | base64`
-
-Kết quả:
-
-`dGhhb2RlcHRyYWk=`
-
-Chèn password mới vào máy ảo, lưu ý máy ảo phải đang bật
-
-`virsh  qemu-agent-command instance-0000000d '{ "execute": "guest-set-user-password","arguments": { "crypted": false,"username": "root","password": "dGhhb2RlcHRyYWk=" } }'`
-
-Kết quả:
-
-`{"return":{}}`
-
-Thử đăng nhập vào máy ảo với password mới là `thaodeptrai`
 
 
 **Link tham khảo:**

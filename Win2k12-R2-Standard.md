@@ -18,7 +18,7 @@ Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy �
 ``` sh
 qemu-img create -f qcow2 /var/lib/libvirt/images/Win2k12_Standard/win2k12r2.qcow2  30G
 
-virt-install --connect qemu:///system \
+# virt-install --connect qemu:///system \
   --name ws2008 --ram 4096 --vcpus 4 \
   --network bridge=br0,model=virtio \
   --disk path=/var/lib/libvirt/images/Win2k12_Standard/win2k12r2.qcow2,format=qcow2,device=disk,bus=virtio \
