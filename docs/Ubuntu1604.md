@@ -67,6 +67,30 @@ với `ubuntu16` là tên máy ảo
 
 Bật máy ảo lên, truy cập vào máy ảo. Lưu ý với lần đầu boot, bạn phải sử dụng tài khoản tạo trong quá trình cài os, chuyển đổi nó sang tài khoản root để sử dụng.
 
+Cấu hình cho phép login root và xóa user `ubuntu` chỉnh `vi /etc/ssh/sshd_config`
+```sh
+PermitRootLogin yes
+```
+
+Đặt passwd cho root
+```sh
+sudo su 
+passwd
+Enter new UNIX password: <root_passwd>
+Retype new UNIX password: <root_passwd>
+```
+
+Restart sshd
+```sh
+service ssh restart
+```
+
+Logout login bằng user `root` và xóa user `ubuntu`
+```sh
+userdel ubuntu
+rm -rf /home/ubuntu
+```
+
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
 `apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y`
@@ -78,17 +102,16 @@ Bật máy ảo lên, truy cập vào máy ảo. Lưu ý với lần đầu boot
 Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
 ```
 # Disable Warning đối với EC2 trên Ubuntu 16
-
+touch /var/lib/cloud/instance/warnings/.skip
 ```
 
 ## Bước 5: Cấu hình user nhận ssh keys
 
-Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `ubuntu`. Ở đây mình đổi thành admin. Xóa hết những tùy chọn còn lại ở section `users`
+Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
 
 ``` sh
-users:
-  - name: admin
-    (...)
+sed -i 's/disable_root: false/disable_root: true/g' /etc/cloud/cloud.cfg
+sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
 ## Bước 6: Xóa bỏ thông tin của địa chỉ MAC
