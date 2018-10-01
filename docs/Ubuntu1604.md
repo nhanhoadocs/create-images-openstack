@@ -75,6 +75,7 @@ PermitRootLogin yes
 Đặt passwd cho root
 ```sh
 sudo su 
+# Đặt passwd cho root user
 passwd
 Enter new UNIX password: <root_passwd>
 Retype new UNIX password: <root_passwd>
@@ -85,10 +86,17 @@ Restart sshd
 service ssh restart
 ```
 
-Logout login bằng user `root` và xóa user `ubuntu`
+Logout và login lại bằng user `root` và xóa user `ubuntu`
 ```sh
 userdel ubuntu
 rm -rf /home/ubuntu
+```
+
+Update 
+```sh
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
 ```
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
