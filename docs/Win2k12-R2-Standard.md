@@ -16,57 +16,57 @@ Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy �
 
 
 ``` sh
-qemu-img create -f qcow2 /var/lib/libvirt/images/Win2k12_Standard/win2k12r2.qcow2  30G
+qemu-img create -f qcow2 /var/lib/libvirt/images/win2k12r2.qcow2  30G
 
 # virt-install --connect qemu:///system \
   --name ws2008 --ram 4096 --vcpus 4 \
   --network bridge=br0,model=virtio \
-  --disk path=/var/lib/libvirt/images/Win2k12_Standard/win2k12r2.qcow2,format=qcow2,device=disk,bus=virtio \
-  --cdrom /var/lib/libvirt/images/Win2k12_Standard/EN_Windows_Server_2008_R2-64-SP1.iso \
-  --disk path=/var/lib/libvirt/images/Win2k12_Standard/virtio-win-0.1.141.iso,device=cdrom \
+  --disk path=/var/lib/libvirt/images/win2k12r2.qcow2,format=qcow2,device=disk,bus=virtio \
+  --cdrom /var/lib/libvirt/images/EN_Windows_Server_2008_R2-64-SP1.iso \
+  --disk path=/var/lib/libvirt/images/virtio-win-0.1.141.iso,device=cdrom \
   --vnc --os-type windows --os-variant win2k8
 ```
 #### *Chú ý: để có thể sử dụng qemu-guest-agent để thay đổi password máy ảo thì phiên bản virio phải >= 0.1.126*
 
 ### 1.3. Trên máy host KVM, bật giao diện virt-manager và khởi tạo, khai báo tên máy ảo
 
-![Create VM 1](/images/Win2k12_Standard/win2k12_1.jpg)
+![Create VM 1](../images/Win2k12_Standard/win2k12_1.jpg)
 
 ### 1.4. Chọn đường dẫn tới file image tạo ban đầu, và khai báo OS type của máy ảo
 
-![Create VM 2](/images/Win2k12_Standard/win2k12_2.jpg)
+![Create VM 2](../images/Win2k12_Standard/win2k12_2.jpg)
 
 ### 1.5. Khai báo CPU và RAM cho máy ảo
 
-![Create VM 3](/images/Win2k12_Standard/win2k12_3.jpg)
+![Create VM 3](../images/Win2k12_Standard/win2k12_3.jpg)
 
 ### 1.6. Kích vào lựa chọn "Customize configuration before install" sau đó Finish
 
-![Create VM 4](/images/Win2k12_Standard/win2k12_4.jpg)
+![Create VM 4](../images/Win2k12_Standard/win2k12_4.jpg)
 
 ### 1.7.Chỉnh lại "Disk bus" và "Storage Format" của Disk 1
 
-![Create VM 5](/images/Win2k12_Standard/win2k12_5.jpg)
+![Create VM 5](../images/Win2k12_Standard/win2k12_5.jpg)
 
 ### 1.8. Lựa chọn "Add hardware", sau đó add thêm CD ROM với ISO Windows 2012 Standard
 
-![Create VM 6](/images/Win2k12_Standard/win2k12_6.jpg)
+![Create VM 6](../images/Win2k12_Standard/win2k12_6.jpg)
 
 ### 1.9. Lựa chọn "Add hardware", sau đó add thêm 1 CD ROM trống
 
-![Create VM 6](/images/Win2k12_Standard/win2k12_15.jpg)
+![Create VM 6](../images/Win2k12_Standard/win2k12_15.jpg)
 
 ### 1.10. Trong phần "NIC", lựa chọn giải mạng NAT
 
-![Create VM 7](/images/Win2k12_Standard/win2k12_7.jpg)
+![Create VM 7](../images/Win2k12_Standard/win2k12_7.jpg)
 
 ### 1.11. Trong phần "Boot Options", chỉnh lại thứ tự boot, sau đó chọn "Begin Installation" để bắt đầu chạy máy ảo
 
-![Create VM 8](/images/Win2k12_Standard/win2k12_8.jpg)
+![Create VM 8](../images/Win2k12_Standard/win2k12_8.jpg)
 
 ### 1.12. Tắt máy ảo
 
-![Create VM 9](/images/Win2k12_Standard/win2k12_9.jpg)
+![Create VM 9](../images/Win2k12_Standard/win2k12_9.jpg)
 
 ### 1.13. Chỉnh sửa file .xml của máy ảo, bổ sung thêm channel trong `<devices>` (để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent), sau đó save lại
 
@@ -85,124 +85,124 @@ với `Win2012` là tên máy ảo
 
 ### 1.14. Bật máy ảo để cài đặt OS
 
-![Create VM 10](/images/Win2k12_Standard/win2k12_10.png)
+![Create VM 10](../images/Win2k12_Standard/win2k12_10.png)
 
 ### 1.15. Lựa chọn phiên bản cài đặt (Windows Server 2012 R2 Standard Evaluation GUI)
 
-![Create VM 11](/images/Win2k12_Standard/win2k12_11.jpg)
-![Create VM 12](/images/Win2k12_Standard/win2k12_12.jpg)
+![Create VM 11](../images/Win2k12_Standard/win2k12_11.jpg)
+![Create VM 12](../images/Win2k12_Standard/win2k12_12.jpg)
 
 ### 1.16. Lựa chọn chỉ cài đặt Windows không tự động Upgrade
 
-![Create VM 13](/images/Win2k12_Standard/win2k12_13.jpg)
+![Create VM 13](../images/Win2k12_Standard/win2k12_13.jpg)
 
 ### 1.17. Máy ảo sẽ không tự động load ổ đĩa cứng
 
-![Create VM 14](/images/Win2k12_Standard/win2k12_14.jpg)
+![Create VM 14](../images/Win2k12_Standard/win2k12_14.jpg)
 
 Đưa ISO"virtio-win.iso" vào CD ROM trống đã gắn ban đầu
 
-![Create VM 15](/images/Win2k12_Standard/win2k12_16.jpg)
+![Create VM 15](../images/Win2k12_Standard/win2k12_16.jpg)
 
 Browse tới file ISO vừa đưa vào
 
-![Create VM 16](/images/Win2k12_Standard/win2k12_17.jpg)
+![Create VM 16](../images/Win2k12_Standard/win2k12_17.jpg)
 
 Chọn Driver storage cho Windows 2k12R2
 
-![Create VM 17](/images/Win2k12_Standard/win2k12_18.jpg)
-![Create VM 18](/images/Win2k12_Standard/win2k12_19.jpg)
+![Create VM 17](../images/Win2k12_Standard/win2k12_18.jpg)
+![Create VM 18](../images/Win2k12_Standard/win2k12_19.jpg)
 
 ### 1.18. Lúc này máy ảo đã nhận ổ đĩa, tiến hành cài đặt OS, làm theo các hướng dẫn để cài như bình thường
 
-![Create VM 19](/images/Win2k12_Standard/win2k12_20.jpg)
-![Create VM 20](/images/Win2k12_Standard/win2k12_21.jpg)
+![Create VM 19](../images/Win2k12_Standard/win2k12_20.jpg)
+![Create VM 20](../images/Win2k12_Standard/win2k12_21.jpg)
 
 ### 1.19. Sau khi cài xong OS, tắt VM và sửa lại Boot Options, lựa chọn Boot từ Hard Disk và bật máy ảo
 
-![Create VM 21](/images/Win2k12_Standard/win2k12_22.jpg)
+![Create VM 21](../images/Win2k12_Standard/win2k12_22.jpg)
 
 ## 2. Xử lý image sau khi đã cài xong OS
 ### 2.1. Tạo password administrator cho máy ảo
 
-![Create VM 22](/images/Win2k12_Standard/win2k12_23.jpg)
+![Create VM 22](../images/Win2k12_Standard/win2k12_23.jpg)
 
 ### 2.1. Vào "Device Manager" để update driver cho NIC, cài đặt Baloon network driver để VM nhận card mạng
 
-![Create VM 23](/images/Win2k12_Standard/win2k12_24.jpg)
-![Create VM 24](/images/Win2k12_Standard/win2k12_25.jpg)
-![Create VM 25](/images/Win2k12_Standard/win2k12_26.jpg)
-![Create VM 26](/images/Win2k12_Standard/win2k12_27.jpg)
-![Create VM 27](/images/Win2k12_Standard/win2k12_28.jpg)
+![Create VM 23](../images/Win2k12_Standard/win2k12_24.jpg)
+![Create VM 24](../images/Win2k12_Standard/win2k12_25.jpg)
+![Create VM 25](../images/Win2k12_Standard/win2k12_26.jpg)
+![Create VM 26](../images/Win2k12_Standard/win2k12_27.jpg)
+![Create VM 27](../images/Win2k12_Standard/win2k12_28.jpg)
 
 ### 2.2. Kiểm tra lại việc cài đặt Driver cho NIC
 
-![Create VM 28](/images/Win2k12_Standard/win2k12_29.jpg)
+![Create VM 28](../images/Win2k12_Standard/win2k12_29.jpg)
 
 ### 2.2. Cài đặt Baloon driver cho Memory
 Copy `/virtio-win-0.1.1/Baloon/2k12R2/amd64` từ CD Drive vào `C:\`
-![Create VM 29](/images/Win2k12_Standard/win2k12_30.jpg)
+![Create VM 29](../images/Win2k12_Standard/win2k12_30.jpg)
 
 Chạy CMD, trỏ về thư mục amd64 vừa copy và chạy lệnh:
 ```
 PS C:\Users\Administrator> cd C:\amd64
 PS C:\amd6>. \blnsvr.exe -i
 ```
-![Create VM 30](/images/Win2k12_Standard/win2k12_31.jpg)
+![Create VM 30](../images/Win2k12_Standard/win2k12_31.jpg)
 
 Kiểm tra trong services.msc
 
-![Create VM 31](/images/Win2k12_Standard/win2k12_32.jpg)
+![Create VM 31](../images/Win2k12_Standard/win2k12_32.jpg)
 
 ### 2.3. Cài đặt qemu-guest-agent
 #### *Chú ý: qemu-guest-agent là một daemon chạy trong máy ảo, giúp quản lý và hỗ trợ máy ảo khi cần (có thể cân nhắc việc cài thành phần này lên máy ảo)*
 
 Vào "Device Manager", chọn update driver cho `PCI Simple Communication Controller`
 
-![Create VM 32](/images/Win2k12_Standard/win2k12_33.jpg)
-![Create VM 33](/images/Win2k12_Standard/win2k12_34.jpg)
-![Create VM 34](/images/Win2k12_Standard/win2k12_35.jpg)
+![Create VM 32](../images/Win2k12_Standard/win2k12_33.jpg)
+![Create VM 33](../images/Win2k12_Standard/win2k12_34.jpg)
+![Create VM 34](../images/Win2k12_Standard/win2k12_35.jpg)
 
 Kiểm tra lại việc cài đặt Driver cho `PCI Simple Communication Controller`
 
-![Create VM 35](/images/Win2k12_Standard/win2k12_36.jpg)
+![Create VM 35](../images/Win2k12_Standard/win2k12_36.jpg)
 
 Cài đặt qemu-guest-agent cho Windows Server 2k12, vào CD ROM virio và cài đặt phiên bản qemu-ga (ở đây là `qemu-ga-x64`)
 
-![Create VM 36](/images/Win2k12_Standard/win2k12_37.jpg)
+![Create VM 36](../images/Win2k12_Standard/win2k12_37.jpg)
 
 Cài đặt Driver `PCI Device` để cho có thể nhận được thông số CPU
 
-![Create VM 36.2](/images/Win2k12_Standard/win2k12_37-2.jpg)
+![Create VM 36.2](../images/Win2k12_Standard/win2k12_37-2.jpg)
 
 Kiểm tra lại việc cài đặt qemu-guest-agent
 
 `PS C:\Users\Administrator> Get-Service QEMU-GA`
 
-![Create VM 37](/images/Win2k12_Standard/win2k12_38.jpg)
+![Create VM 37](../images/Win2k12_Standard/win2k12_38.jpg)
 
 Kiểm tra lại version của qemu-guest-agent (phải đảm bảo version >= 7.3.2)
 
-![qemu-ga version](/images/Win2k12_Standard/win2k12_49.jpg)
+![qemu-ga version](../images/Win2k12_Standard/win2k12_49.jpg)
 
 ### 2.3. Disable Firewall và enable remote desktop
 
-![disable FW](/images/Win2k12_Standard/win2k12_51.jpg)
-![enable RDP](/images/Win2k12_Standard/win2k12_50.jpg)
+![disable FW](../images/Win2k12_Standard/win2k12_51.jpg)
+![enable RDP](../images/Win2k12_Standard/win2k12_50.jpg)
 
 
 ### 2.4. Cài đặt cloud-init bản mới nhất
 
 Download cloud base init cho Windows bản mới nhất tại [đây](https://cloudbase.it/cloudbase-init/)
 
-![Create VM 38](/images/Win2k12_Standard/win2k12_39.jpg)
+![Create VM 38](../images/Win2k12_Standard/win2k12_39.jpg)
 
 Tiến hành cài đặt
 
-![Create VM 39](/images/Win2k12_Standard/win2k12_40.jpg)
-![Create VM 40](/images/Win2k12_Standard/win2k12_41.jpg)
-![Create VM 41](/images/Win2k12_Standard/win2k12_42.jpg)
-![Create VM 42](/images/Win2k12_Standard/win2k12_43.jpg)
+![Create VM 39](../images/Win2k12_Standard/win2k12_40.jpg)
+![Create VM 40](../images/Win2k12_Standard/win2k12_41.jpg)
+![Create VM 41](../images/Win2k12_Standard/win2k12_42.jpg)
+![Create VM 42](../images/Win2k12_Standard/win2k12_43.jpg)
 
 Trước khi "Finish" cài đặt, sửa lại file `C:\Program Files\Cloudbase Solutions\Cloudbase-Init\conf\cloudbase-init.conf`
 ```
@@ -228,14 +228,14 @@ local_scripts_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScri
 ```
 Enable Sysprep và shutdown máy
 
-![Create VM 43](/images/Win2k12_Standard/win2k12_44.jpg)
-![Create VM 44](/images/Win2k12_Standard/win2k12_45.jpg)
+![Create VM 43](../images/Win2k12_Standard/win2k12_44.jpg)
+![Create VM 44](../images/Win2k12_Standard/win2k12_45.jpg)
 
 ## 3.Thực hiện trên Host KVM
 
 ### 3.1. Dùng lệnh sau để tối ưu kích thước image:
 ```
-virt-sparsify --compress /var/lib/libvirt/images/Win2k12_Standard/win2k12r2.qcow2 Windows-2012-64bit-Plesk-2018.img
+virt-sparsify --compress /var/lib/libvirt/images/win2k12r2.qcow2 Windows-2012-64bit-Plesk-2018.img
 ```
 
 ### 3.2. Upload image lên glance
@@ -251,13 +251,13 @@ glance image-create --name Win2k12-64bit-2018 \
 
 ### 3.3. Kiểm tra việc upload image đã thành công hay chưa
 
-![Create VM 45](/images/Win2k12_Standard/win2k12_46.jpg)
+![Create VM 45](../images/Win2k12_Standard/win2k12_46.jpg)
 
 ### 3.4. Chỉnh sửa metadata của image upload
-![Create VM 46](/images/Win2k12_Standard/win2k12_47.jpg)
+![Create VM 46](../images/Win2k12_Standard/win2k12_47.jpg)
 
 Thêm 2 metadata là 'hw_qemu_guest_agent' và 'os_type', với giá trị tương ứng là `true` và `windows`, sau đó save lại
-![Create VM 47](/images/Win2k12_Standard/win2k12_48.jpg)
+![Create VM 47](../images/Win2k12_Standard/win2k12_48.jpg)
 
 Image đã sẵn sàng để launch máy ảo.
 

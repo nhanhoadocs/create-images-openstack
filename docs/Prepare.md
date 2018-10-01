@@ -148,3 +148,4 @@ drwxr-xr-x. 9 root root       4096 Sep 19 19:00 ..
 [root@KVM ~]# 
 ```
 
+Hoàn tất cài đặt KVM host để đóng Images, Tiến hành đóng Images
