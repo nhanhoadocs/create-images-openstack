@@ -6,7 +6,7 @@ Môi trường chuẩn bị:
 - Disk: 200G 
 - CPU: 4x2 Core
 
-Enable `vmx` cho KVM Node trên ESXi Node
+Sau khi cài đặt xong CentOS 7 tiến hành shutoff và cấu hình enable `vmx` cho KVM Node trên ESXi Node
 ```
 # Shutdown VM --> SSH to ESXi --> go to folder --> edit VM-name.vmx --> Add line
 vhv.enable = "TRUE"
@@ -15,6 +15,8 @@ vhv.enable = "TRUE"
 vim-cmd vmsvc/getallvms | grep -i <name> 
 vim-cmd vmsvc/reload <id>
 ```
+
+Start KVM host lên và cấu hình
 
 Cài đặt Vm tools
 ```
@@ -56,6 +58,11 @@ Disable ipv6
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
 sysctl -p
+```
+
+Enable `X11Forwarding yes` trong `/etc/ssh/sshd_config`
+```
+X11Forwarding yes
 ```
 
 Thêm cấu hình `/etc/ssh/sshd_config` để sử dụng X11Forward khi disable IPv6
