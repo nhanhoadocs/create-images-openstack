@@ -54,20 +54,25 @@ nmcli c add type bridge-slave autoconnect yes con-name ens160 ifname ens160 mast
 ```
 
 Disable ipv6
-```
+```sh
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
 sysctl -p
 ```
 
 Enable `X11Forwarding yes` trong `/etc/ssh/sshd_config`
-```
+```sh
 X11Forwarding yes
 ```
 
 Thêm cấu hình `/etc/ssh/sshd_config` để sử dụng X11Forward khi disable IPv6
-```
+```sh
 AddressFamily inet
+```
+
+Restart SSH
+```sh
+systemctl restart sshd 
 ```
 
 Sử dụng `Xming Server` cài đặt trên Windows Client để thao tác với `virt-manager` qua X11 khi SSH vào Server KVM.
