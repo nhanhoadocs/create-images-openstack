@@ -17,7 +17,7 @@ Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy �
 Ở đây mình sử dụng virt-install
 
 ``` sh
-qemu-img create -f qcow2 /tmp/trusty.qcow2 10G
+qemu-img create -f qcow2 /tmp/ubuntu16.qcow2 10G
 
 virt-install --virt-type kvm --name trusty --ram 1024 \
   --cdrom=/var/lib/libvirt/images/ubuntu-14.04.4-server-amd64.iso \
