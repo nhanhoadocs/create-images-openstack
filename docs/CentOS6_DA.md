@@ -148,7 +148,6 @@ Sau khi cài đặt DA tiến hành cấu hình cho DA trước khi đóng Templ
 sed -i 's|ONBOOT=no|ONBOOT=yes|g' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # Xóa `HWADDR` và UUID trong config
-# rm -f /etc/udev/rules.d/70-persistent-net.rules
 sed -i '/UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 sed -i '/HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 ```

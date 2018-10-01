@@ -80,13 +80,33 @@ sysctl -p
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
+## Bước 4: Cài đặt Plesk 
+
+Cài đặt 
+```sh
+# Sử dụng screen để cài đặt 
+screen -S Plesk
+
+# Cài đặt Plesk 
+sh <(curl https://autoinstall.plesk.com/one-click-installer || wget -O - https://autoinstall.plesk.com/one-click-installer)
+
+# Để thoát màn hình screen
+Ctrl + A + D
+
+# Để login lại màn hình screen cài đặt DA 
+screen -rd Plesk
+
+# Sau khi cài đặt xong xóa file cài đặt
+rm -rf latest installer.lock
+```
+
+==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
+## Bước 5: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cấu hình network 
 
@@ -95,7 +115,6 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 sed -i 's|ONBOOT=no|ONBOOT=yes|g' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # Xóa `HWADDR` và UUID trong config
-# rm -f /etc/udev/rules.d/70-persistent-net.rules
 sed -i '/UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 sed -i '/HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 ```
@@ -177,7 +196,7 @@ history -c
 poweroff
 ```
 
-## Bước 5: Xử lý image trên KVM host
+## Bước 6: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details

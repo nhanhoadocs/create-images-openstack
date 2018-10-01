@@ -100,8 +100,6 @@ systemctl restart sshd
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết

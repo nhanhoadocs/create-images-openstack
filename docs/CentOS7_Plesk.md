@@ -100,8 +100,6 @@ systemctl restart sshd
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
@@ -113,7 +111,8 @@ Cài đặt
 # Sử dụng screen để cài đặt 
 screen -S Plesk
 
-
+# Cài đặt Plesk 
+sh <(curl https://autoinstall.plesk.com/one-click-installer || wget -O - https://autoinstall.plesk.com/one-click-installer)
 
 # Để thoát màn hình screen
 Ctrl + A + D
@@ -243,7 +242,6 @@ glance image-create --name CentOS7-64bit-Plesk-2018 \
 ```
 
 - Image đã sẵn sàng để launch máy ảo.
-
 
 **Link tham khảo**
 

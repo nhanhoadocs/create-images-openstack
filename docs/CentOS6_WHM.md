@@ -80,13 +80,36 @@ sysctl -p
 
 ```sh
 yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
+## Bước 4: Cài đặt WHM
+
+Cài đặt 
+```sh
+# Sử dụng screen để cài đặt 
+screen -S WHM
+
+# Cài đặt các requirement packet 
+yum install curl perl -y 
+
+# Tải bản cài đặt về 
+curl -o latest -L https://securedownloads.cpanel.net/latest
+
+# Để thoát màn hình screen
+Ctrl + A + D
+
+# Để login lại màn hình screen cài đặt DA 
+screen -rd WHM
+
+# Sau khi cài đặt xong xóa file cài đặt
+rm -rf latest
+```
+
+==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
+## Bước 5: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Cấu hình network 
 
@@ -95,7 +118,6 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 sed -i 's|ONBOOT=no|ONBOOT=yes|g' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # Xóa `HWADDR` và UUID trong config
-# rm -f /etc/udev/rules.d/70-persistent-net.rules
 sed -i '/UUID/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 sed -i '/HWADDR/d' /etc/sysconfig/network-scripts/ifcfg-eth0
 ```
@@ -177,7 +199,7 @@ history -c
 poweroff
 ```
 
-## Bước 5: Xử lý image trên KVM host
+## Bước 6: Xử lý image trên KVM host
 
 ``` sh
 # Xóa bỏ MAC address details
@@ -194,15 +216,15 @@ virt-sparsify --compress /tmp/centos64.qcow2 CentOS6-64bit-WHM-2018.img
 > 
 > Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 6: Upload image lên glance
+## Bước 7: Upload image lên glance
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
 ``` sh
-glance image-create --name CentOS6-64bit-2018 \
+glance image-create --name CentOS6-64bit-WHM-2018 \
 --disk-format qcow2 \
 --container-format bare \
---file /root/CentOS6-64bit-2018.img \
+--file /root/CentOS6-64bit-WHM-2018.img \
 --visibility=public \
 --property hw_qemu_guest_agent=yes \
 --progress

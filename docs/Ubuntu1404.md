@@ -30,10 +30,7 @@ virt-install --virt-type kvm --name ubuntu14 --ram 1024 \
 **Một số lưu ý trong quá trình cài đặt**
 
 - Đối với hostname, các bạn có thể đặt mặc định bởi ta dùng cloud-init để set sau.
-- Đối với cấu hình partion, do ở đây mình dùng cloud-init nên không thể cấu hình LVM mặc định.
-Thay vào đó, ta sẽ cấu hình bằng tay với 1 phân vùng root (/) để máy ảo có thể tự resize theo flavor mới.
-
-Lưu ý: không dùng cấu hình tự động, mình đã thử và thấy máy ảo không thể tự resize.
+- Đối với cấu hình partion, để standard cloud-init với 1 phân vùng root (/) để máy ảo có thể tự resize theo flavor mới.
 
 <img src="http://i.imgur.com/hI7aW14.png">
 
@@ -65,33 +62,6 @@ với `ubuntu14` là tên máy ảo
 ...
 ```
 
-**Lưu ý:**
-
-Các bước dưới đây chỉ cần thực hiện một lần ở lần đóng image đầu tiên
-
-- Tạo thêm thư mục cho channel vừa tạo và phân quyền cho thư mục đó
-
-``` sh
-mkdir -p /var/lib/libvirt/qemu/channel/target
-chown -R libvirt-qemu:kvm /var/lib/libvirt/qemu/channel
-```
-
-- Nếu KVM host là ubuntu, sửa file /etc/apparmor.d/abstractions/libvirt-qemu
-
-`vi /etc/apparmor.d/abstractions/libvirt-qemu`
-
-Thêm dòng sau vào cuối File
-
-`/var/lib/libvirt/qemu/channel/target/*.qemu.guest_agent.0 rw,`
-
-Mục đích là phân quyền cho phép libvirt-qemu được đọc ghi các file có hậu tố `.qemu.guest_agent.0` trong thư mục `/var/lib/libvirt/qemu/channel/target`
-
-Khởi động lại `libvirt` và `apparmor`
-
-``` sh
-service libvirt-bin restart
-service apparmor reload
-```
 
 ## Bước 3: Cài các dịch vụ cần thiết
 
@@ -105,9 +75,7 @@ Bật máy ảo lên, truy cập vào máy ảo. Lưu ý với lần đầu boot
 
 `dpkg-reconfigure cloud-init`
 
-Sau khi màn hình mở ra, lựa chọn duy nhất EC2
-
-<img src="http://i.imgur.com/o2e5Gwm.png">
+Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
 
 ## Bước 5: Cấu hình user nhận ssh keys
 
