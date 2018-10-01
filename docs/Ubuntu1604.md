@@ -92,6 +92,11 @@ userdel ubuntu
 rm -rf /home/ubuntu
 ```
 
+Đổi timezone về `Asia/Ho_Chi_Minh`
+```sh
+dpkg-reconfigure tzdata
+```
+
 Update 
 ```sh
 sudo apt-get update
@@ -238,6 +243,5 @@ glance image-create --name ubuntu16-64bit-2018 \
 
 **Link tham khảo:**
 
-https://github.com/hocchudong/Image_Create/blob/master/docs/ubuntu16.04_noLVM%2Bqemu_ga.md
+https://github.com/hocchudong/Image_Create/blob/master/docs/ubuntu14.04_noLVM%2Bqemu_ga.md
 
-https://github.com/thaonguyenvan/meditech-thuctap/blob/master/ThaoNV/Tim%20hieu%20OpenStack/docs/image-create/ubuntu16-04-cloudinit-noLVM.md
