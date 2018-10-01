@@ -18,6 +18,13 @@ vim-cmd vmsvc/reload <id>
 
 Start KVM host lên và cấu hình
 
+Kiểm tra vmx enable trên KVM host
+```sh
+cat /proc/cpuinfo| egrep -c "vmx|svm"
+```
+
+> Nếu OUTPUT câu lệnh trên >0 thì đã enable vmx OK 
+
 Cài đặt Vm tools
 ```
 yum install -y open-vm-tools wget
