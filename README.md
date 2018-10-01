@@ -44,11 +44,11 @@ Ubuntu
 
 [- Đóng Images Windows 2k8](docs/Windows-2008-64bit-2018.md)
 
-[- Đóng Images Windows 2k8 Flesk](docs/Windows-2008-64bit-DA-2018.md)
+[- Đóng Images Windows 2k8 Plesk](docs/Windows-2008-64bit-DA-2018.md)
 
 [- Đóng Images Windows 2k12](docs/Windows-2012-64bit-2018.md)
 
-[- Đóng Images Windows 2k12 Flesk](docs/Windows-2012-64bit-DA-2018.md)
+[- Đóng Images Windows 2k12 Plesk](docs/Windows-2012-64bit-DA-2018.md)
 
 ## Kiểm tra 
 
