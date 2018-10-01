@@ -1,0 +1,96 @@
+Installation from the Web Interface
+
+To install Plesk through the web interface:
+
+    Download the Plesk Installer utility that suits your operating system from http://installer.plesk.com/plesk-installer (for Linux) or http://autoinstall-win.plesk.com/plesk-installer.exe (for Windows).
+    (Only for Linux) Set the execution permission for Plesk Installer:
+
+    chmod +x plesk-installer
+    Make sure that port 8447 on the server is not filtered. For the complete list of ports Plesk needs to be open, see https://support.plesk.com/hc/en-us/articles/213932745.
+    Run the Plesk Installer.
+
+    On a Linux/Unix server: ./plesk-installer --web-interface
+
+    On a Windows server: plesk-installer.exe
+    (Only for Linux) Open your browser and enter https://host-name:8447/ or https://IP-address:8447/ in the address bar. The Plesk Installer Web interface opens.
+
+    (Only for Windows) Plesk Installer wizard opens in a new browser window. When the installer starts, an additional console window opens. This window displays the operations performed by the utility. It is closed upon the successful installation, or after 30 minutes of inactivity.
+
+    Note: As described in the section Before Installing Plesk, you can select which Plesk build to install depending on its release tier. By default, Installer shows you only the latest general and late adopter releases as available for installation. To be able to install other Plesk releases, use the following Installer options:
+    --all-versions to view all available Plesk versions.
+    --tier <release_tier> to view the latest available versions with the specified release tier.
+    Log in to the web interface.
+        If you are running Windows, type the administrator's username ("Administrator"), administrator's password, and click Log In.
+        If you are running Linux, type the root username and password, and click Log In.
+    Follow the installation steps.
+
+After installation has finished, you can log in to Plesk at the address https://<host-name-or-IP>:8443 using the username "root" and the root user's password (on Linux) or using the username "Administrator" and the administrator's password (on Windows).
+
+Installation from the Command Line
+
+You can easily install Plesk on a Linux-based server using a special script. The script automatically determines your operating system and installs the latest version of an appropriate distribution package in a typical configuration.
+
+Installation may take from 10 to 60 minutes, depending on the network connection speed, operating system, and the number of components selected for installation.
+On Linux-based Servers
+
+To install Plesk in a typical configuration:
+
+    Log in as root to the server.
+    Make sure that wget is installed. To do this, issue the following command in the server console:
+        On Debian Linux: apt-get install wget
+        On RHEL and CentOS Linux: yum install wget
+    Run Plesk installation with the following command:
+
+    wget -O - http://installer.plesk.com/one-click-installer | sh
+
+After installation has finished, you can log in to Plesk at the address https://<host-name-or-IP>:8443 using the username "root" and the root user's password.
+
+To install Plesk with a custom selection of components:
+
+    Log in as root to the server.
+    Make sure that wget is installed. To do this, issue the following command in the server console:
+        On Debian Linux: apt-get install wget
+        On RHEL and CentOS Linux: yum install wget
+    Download the installer script from http://installer.plesk.com/plesk-installer:
+
+    wget http://installer.plesk.com/plesk-installer
+    Run the installer:
+
+    sh ./plesk-installer
+
+    Note: As described in the section Before Installing Plesk, you can select which Plesk build to install depending on its release tier. By default, Installer shows you only the latest general and late adopter releases as available for installation. To install other Plesk releases, use the following Installer options:
+    --all-versions to view all available Plesk versions.
+    --tier <release_tier> to view the latest available versions with the specified release tier.
+    Follow the steps prompted by the installation wizard to select the Plesk version and components that you want to install.
+
+After installation has finished, you can log in to Plesk at the address https://<host-name-or-IP>:8443 using the username "root" and the root user's password.
+On Windows-based Servers
+
+To install Plesk in a typical configuration:
+
+    Log in as administrator to the server.
+    Download the Plesk Installer utility from http://autoinstall-win.plesk.com/plesk-installer.exe.
+    Run the installer:
+
+    plesk-installer.exe --select-product-id=panel --select-release-id=PANEL_12_0_18_WIN --installation-type=typical
+
+    Note: As described in the section Before Installing Plesk, you can select which Plesk build to install depending on its release tier. By default, Installer shows you only the latest general and late adopter releases as available for installation. To install other Plesk releases, use the following Installer options:
+    --all-versions to view all available Plesk versions.
+    --tier <release_tier> to view the latest available versions with the specified release tier.
+
+After installation has finished, you can log in to Plesk at the address https://<host-name-or-IP>:8443 using the username "Administrator" and the server administrator's password.
+
+To install Plesk with a custom selection of components:
+
+    Log in as administrator to the server.
+    Download the Plesk Installer utility from http://autoinstall-win.plesk.com/plesk-installer.exe.
+    Run the installer:
+
+    plesk-installer.exe --console
+
+    Note: As described in the section Before Installing Plesk, you can select which Plesk build to install depending on its release tier. By default, Installer shows you only the latest general and late adopter releases as available for installation. To install other Plesk releases, use the following Installer options:
+    --all-versions to view all available Plesk versions.
+    --tier <release_tier> to view the latest available versions with the specified release tier.
+    Follow the steps prompted by the installation wizard to select the Plesk version and components that you want to install.
+
+After installation has finished, you can log in to Plesk at the address https://<host-name-or-IP>:8443 using the username "Administrator" and the server administrator's password.
