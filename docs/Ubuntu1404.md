@@ -187,25 +187,16 @@ iface eth0 inet dhcp
 
 `init 0`
 
-## Bước 13: Cài libguestfs-tools để xử lý image
 
-`apt-get install libguestfs-tools -y`
-
-**Lưu ý:**
-
-Từ bước này thực hiện trên host KVM.
-
-Bước 13 chỉ cần thực hiện ở lần đóng image đầu tiên.
-
-## Bước 14: Clean up image
+## Bước 13: Clean up image
 
 `virt-sysprep -d ubuntu14`
 
-## Bước 15: Undefine libvirt domain
+## Bước 14: Undefine libvirt domain
 
 `virsh undefine ubuntu14`
 
-## Bước 16: Giảm kích thước máy ảo
+## Bước 15: Giảm kích thước máy ảo
 
 `virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img`
 
@@ -213,7 +204,7 @@ Bước 13 chỉ cần thực hiện ở lần đóng image đầu tiên.
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 17: Upload image lên glance
+## Bước 16: Upload image lên glance
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
