@@ -123,7 +123,7 @@ yum install libguestfs-tools -y
 ```
 
 
-Copy images vào folder (Có thể lấy trên Server 172.16.4.51)
+Copy images vào folder (Có thể lấy trên Server 10.10.10.61)
 ```
 [root@KVM ~]# ls -al /var/lib/libvirt/images/
 total 18074212
