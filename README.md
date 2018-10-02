@@ -44,11 +44,9 @@ Ubuntu
 
 [- Đóng Images Windows 2k8](docs/Windows-2008-64bit-2018.md)
 
-[- Đóng Images Windows 2k8 Plesk](docs/Windows-2008-64bit-DA-2018.md)
-
 [- Đóng Images Windows 2k12](docs/Windows-2012-64bit-2018.md)
 
-[- Đóng Images Windows 2k12 Plesk](docs/Windows-2012-64bit-DA-2018.md)
+[- Cài đặt MSSQL2012 + Win2k12 + Plesk](docs/Win2k12_Plesk_MSSQL12_install.md)
 
 ## Kiểm tra 
 

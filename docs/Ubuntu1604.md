@@ -75,6 +75,7 @@ PermitRootLogin yes
 Đặt passwd cho root
 ```sh
 sudo su 
+# Đặt passwd cho root user
 passwd
 Enter new UNIX password: <root_passwd>
 Retype new UNIX password: <root_passwd>
@@ -85,23 +86,54 @@ Restart sshd
 service ssh restart
 ```
 
-Logout login bằng user `root` và xóa user `ubuntu`
+Logout và login lại bằng user `root` và xóa user `ubuntu`
 ```sh
 userdel ubuntu
 rm -rf /home/ubuntu
 ```
 
+Đổi timezone về `Asia/Ho_Chi_Minh`
+```sh
+dpkg-reconfigure tzdata
+```
+
+Disable ipv6
+```sh
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+# Kiểm tra config add thành công 
+sysctl -p
+# Kiểm tra disable ipv6 
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+# Output: 1: OK, 0: NotOK
+```
+
+Update 
+```sh
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+```
+
+==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
-`apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y`
+```sh
+apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
+```
 
 ## Bước 4: Cấu hình để instance nhận metadata từ datasource
 
-`dpkg-reconfigure cloud-init`
+```sh
+dpkg-reconfigure cloud-init
+```
 
 Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
 ```
 # Disable Warning đối với EC2 trên Ubuntu 16
+mkdir -p /var/lib/cloud/instance/warnings/
 touch /var/lib/cloud/instance/warnings/.skip
 ```
 
@@ -110,7 +142,7 @@ touch /var/lib/cloud/instance/warnings/.skip
 Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
 
 ``` sh
-sed -i 's/disable_root: false/disable_root: true/g' /etc/cloud/cloud.cfg
+sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
@@ -189,19 +221,27 @@ iface eth0 inet dhcp
 
 ## Bước 12: Tắt máy ảo
 
-`init 0`
+```sh
+init 0
+```
 
 ## Bước 13: Clean up image
 
-`virt-sysprep -d ubuntu16`
+```sh
+virt-sysprep -d ubuntu16.04
+```
 
 ## Bước 14: Undefine libvirt domain
 
-`virsh undefine ubuntu16`
+```sh
+virsh undefine ubuntu16.04
+```
 
 ## Bước 15: Giảm kích thước máy ảo
 
-`virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img`
+```sh
+virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img
+```
 
 **Lưu ý:**
 
@@ -230,6 +270,5 @@ glance image-create --name ubuntu16-64bit-2018 \
 
 **Link tham khảo:**
 
-https://github.com/hocchudong/Image_Create/blob/master/docs/ubuntu16.04_noLVM%2Bqemu_ga.md
+https://github.com/hocchudong/Image_Create/blob/master/docs/ubuntu14.04_noLVM%2Bqemu_ga.md
 
-https://github.com/thaonguyenvan/meditech-thuctap/blob/master/ThaoNV/Tim%20hieu%20OpenStack/docs/image-create/ubuntu16-04-cloudinit-noLVM.md

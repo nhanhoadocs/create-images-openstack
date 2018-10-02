@@ -22,7 +22,8 @@ virt-install --virt-type kvm --name centos72 --ram 2048   --disk /tmp/centos72.q
 > - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
 > 
 > - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng 
-
+> 
+> - Time zone VietNam
 
 ## Bước 2: Xử lí trên KVM host 
 
@@ -107,7 +108,7 @@ yum -y install vnstat mlocate wget iotop iptraf
 ## Bước 4: Cài đặt cấu hình DA
 
 4.1 Cài đặt DA
-```
+```sh
 # Sử dụng screen để cài đặt 
 screen -S DA
 
@@ -128,6 +129,9 @@ chmod +x setup.sh
 Ctrl + A + D
 # Để login lại màn hình screen cài đặt DA 
 screen -rd DA
+
+# Sau khi cài đặt xong xóa file cài đặt 
+rm -rf setup.sh
 ```
 
 4.2 Cấu hình DA

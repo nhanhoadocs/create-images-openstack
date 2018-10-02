@@ -22,7 +22,8 @@ virt-install --virt-type kvm --name centos74 --ram 2048   --disk /tmp/centos74.q
 > - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
 > 
 > - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng 
-
+> 
+> - Time zone VietNam
 
 ## Bước 2: Xử lí trên KVM host 
 

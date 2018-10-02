@@ -22,6 +22,8 @@ virt-install --virt-type kvm --name centos62 --ram 2048   --disk /tmp/centos62.q
 > - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
 > 
 > - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng /
+> 
+> - Time zone VietNam
 
 
 ## Bước 2: Xử lí trên KVM host 
@@ -90,7 +92,7 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ## Bước 4: Cài đặt cấu hình DA
 
 4.1 Cài đặt DA
-```
+```sh
 # Sử dụng screen để cài đặt 
 screen -S DA
 
