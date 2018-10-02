@@ -97,6 +97,18 @@ rm -rf /home/ubuntu
 dpkg-reconfigure tzdata
 ```
 
+Disable ipv6
+```sh
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+# Kiểm tra config add thành công 
+sysctl -p
+# Kiểm tra disable ipv6 
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+# Output: 1: OK, 0: NotOK
+```
+
 Update 
 ```sh
 sudo apt-get update
@@ -104,13 +116,19 @@ sudo apt-get upgrade
 sudo apt-get dist-upgrade
 ```
 
+==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
-`apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y`
+```sh
+apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
+```
 
 ## Bước 4: Cấu hình để instance nhận metadata từ datasource
 
-`dpkg-reconfigure cloud-init`
+```sh
+dpkg-reconfigure cloud-init
+```
 
 Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
 
@@ -119,7 +137,7 @@ Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
 Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
 
 ``` sh
-sed -i 's/disable_root: false/disable_root: true/g' /etc/cloud/cloud.cfg
+sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
@@ -198,20 +216,27 @@ iface eth0 inet dhcp
 
 ## Bước 12: Tắt máy ảo
 
-`init 0`
-
+```sh
+init 0
+```
 
 ## Bước 13: Clean up image
 
-`virt-sysprep -d ubuntu14`
+```
+virt-sysprep -d ubuntu14.04
+```
 
 ## Bước 14: Undefine libvirt domain
 
-`virsh undefine ubuntu14`
+```
+virsh undefine ubuntu14.04
+```
 
 ## Bước 15: Giảm kích thước máy ảo
 
-`virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img`
+```sh
+virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img
+```
 
 **Lưu ý:**
 
