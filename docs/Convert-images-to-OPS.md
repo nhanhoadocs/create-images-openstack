@@ -178,3 +178,11 @@ Quay lại OpenStack `extend volume` ServerKH lên 15G
 
 ## Hoàn tất 
 Từ Volume ServerKH vừa tạo, boot 1 VM từ volume này và sử dụng [script](https://github.com/hocchudong/Image_Create/blob/master/script/partresize.sh) extend volume lvm nếu Server ban đầu sử dụng LVM 
+
+# Tài liệu tham khảo.
+
+http://superuser.openstack.org/articles/how-to-migrate-from-vmware-and-hyper-v-to-openstack/
+
+http://heiterbiswolkig.blogs.nde.ag/2017/08/10/migrate-from-xen-to-kvm/
+
+s

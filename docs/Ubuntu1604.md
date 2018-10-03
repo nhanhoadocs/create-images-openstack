@@ -86,6 +86,12 @@ Restart sshd
 service ssh restart
 ```
 
+Disable firewalld 
+```sh
+sudo apt-get install ufw -y
+sudo ufw disable
+```
+
 Logout và login lại bằng user `root` và xóa user `ubuntu`
 ```sh
 userdel ubuntu
@@ -131,7 +137,7 @@ dpkg-reconfigure cloud-init
 ```
 
 Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
-```
+```sh
 # Disable Warning đối với EC2 trên Ubuntu 16
 mkdir -p /var/lib/cloud/instance/warnings/
 touch /var/lib/cloud/instance/warnings/.skip
@@ -142,19 +148,26 @@ touch /var/lib/cloud/instance/warnings/.skip
 Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
 
 ``` sh
-sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
 ## Bước 6: Xóa bỏ thông tin của địa chỉ MAC
 
-Xóa nội dung file `/lib/udev/rules.d/75-persistent-net-generator.rules` và `/etc/udev/rules.d/70-persistent-net.rules` (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
+Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
+```sh 
+echo '#' > /lib/udev/rules.d/75-persistent-net-generator.rules
+/etc/udev/rules.d/70-persistent-net.rules
+```
 
 Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
 
 ## Bước 7: Cấu hình để instance báo log ra console
 
-Thay đổi `GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"` trong file `/etc/default/grub`.
+```sh
+sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=""|GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"|g' /etc/default/grub
+# Lưu lại config
+update-grub
+```
 
 Sau đó nhập lệnh `update-grub` để lưu lại.
 
@@ -176,7 +189,9 @@ chmod +x /etc/netplug/netplug
 
 ## Bước 9: Disable default config route
 
-Comment dòng `link-local 169.254.0.0` trong `/etc/networks`
+```sh
+sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
+```
 
 ## Bước 10: Cài đặt qemu-guest-agent
 
@@ -194,19 +209,17 @@ apt-get install qemu-guest-agent -y
 
 Kiểm tra phiên bản qemu-ga bằng lệnh:
 
-`qemu-ga --version`
+```sh 
+qemu-ga --version
+service qemu-guest-agent status
+```
 
 Kết quả:
 
-`QEMU Guest Agent 2.5.0`
-
-Kiểm tra dịch vụ
-
-`service qemu-guest-agent status`
-
-Kết quả:
-
-`* qemu-ga is running`
+```sh 
+QEMU Guest Agent 2.5.0
+* qemu-ga is running
+```
 
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 

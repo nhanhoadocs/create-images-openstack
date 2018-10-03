@@ -149,7 +149,7 @@ HOST share62-r3.nhanhoa.com
 
 Truy cập 
 - WHM: https://<ip-public-server>:2083
-- Client: https://<ip-public-server>:2087
+- Cpanel: https://<ip-public-server>:2087
 - Mail: https://<ip-public-server>:2095
 
 # Đổi thông tin IP Plesk 

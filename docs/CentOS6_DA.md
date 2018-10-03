@@ -113,6 +113,9 @@ chmod +x setup.sh
 Ctrl + A + D
 # Để login lại màn hình screen cài đặt DA 
 screen -rd DA
+
+# Sau khi cài đặt xong xóa file cài đặt 
+rm -rf setup.sh
 ```
 
 4.2 Cấu hình DA

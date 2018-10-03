@@ -34,7 +34,7 @@ Cài đặt KVM Node để đóng Images
 ```
 grep -E '(vmx|svm)' /proc/cpuinfo
 # WARNING! The remote SSH server rejected X11 forwarding request.
-yum install qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer bridge-utils  "@X Window System"xorg-x11-xauth xorg-x11-fonts-* xorg-x11-utils -y
+yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer bridge-utils  "@X Window System"xorg-x11-xauth xorg-x11-fonts-* xorg-x11-utils mesa-libGLU*.i686 mesa-libGLU*.x86_64
 touch /root/.Xauthority
 systemctl start libvirtd
 systemctl enable libvirtd
