@@ -12,7 +12,7 @@
 ## Bước 1:Trên KVM host tạo máy ảo CentOS6 bằng commandline (Có thể tạo bằng giao diện)
 
 ``` 
-# CentOS6 Blank
+# CentOS6 Plesk
 qemu-img create -f qcow2 /tmp/centos63.qcow2 10G
 virt-install --virt-type kvm --name centos63 --ram 2048   --disk /tmp/centos63.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-6.9-x86_64-minimal.iso
 ```

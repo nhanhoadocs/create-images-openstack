@@ -6,6 +6,7 @@ Môi trường chuẩn bị:
 - Disk: 200G 
 - CPU: 4x2 Core
 
+## Thực hiện trên ESXi 
 Sau khi cài đặt xong CentOS 7 tiến hành shutoff và cấu hình enable `vmx` cho KVM Node trên ESXi Node
 ```
 # Shutdown VM --> SSH to ESXi --> go to folder --> edit VM-name.vmx --> Add line
@@ -16,6 +17,7 @@ vim-cmd vmsvc/getallvms | grep -i <name>
 vim-cmd vmsvc/reload <id>
 ```
 
+## Thực hiện trên KVM host
 Start KVM host lên và cấu hình
 
 Kiểm tra vmx enable trên KVM host
@@ -74,12 +76,13 @@ X11Forwarding yes
 
 Thêm cấu hình `/etc/ssh/sshd_config` để sử dụng X11Forward khi disable IPv6
 ```sh
+X11Forwarding yes
 AddressFamily inet
 ```
 
 Restart SSH
 ```sh
-systemctl restart sshd 
+systemctl restart sshd
 ```
 
 Sử dụng `Xming Server` cài đặt trên Windows Client để thao tác với `virt-manager` qua X11 khi SSH vào Server KVM.
@@ -98,33 +101,17 @@ Restart libvirt
 systemctl restart libvirtd
 ```
 
-> Nếu KVM host là ubuntu, sửa file /etc/apparmor.d/abstractions/libvirt-qemu
-> 
-> `vi /etc/apparmor.d/abstractions/libvirt-qemu`
-> 
-> Thêm dòng sau vào cuối File
-> 
-> `/var/lib/libvirt/qemu/channel/target/*.qemu.guest_agent.0 rw,`
-> 
-> Mục đích là phân quyền cho phép libvirt-qemu được đọc ghi các file có hậu tố `.qemu.guest_agent.0` trong thư mục `/var/lib/libvirt/qemu/channel/target`
-> 
-> Khởi động lại `libvirt` và `apparmor`
-> 
-> ```
-> service libvirt-bin restart
-> service apparmor reload
-> ```
->
-> .
-
 Cài libguestfs-tools để xử lý file `.qcow2` thành file `.img` sau khi cài đặt cấu hình xong VM.
 ```
 yum install libguestfs-tools -y
 ```
 
 
-Copy images vào folder (Có thể lấy trên Server 10.10.10.61)
-```
+Copy images
+```sh
+# Copy Images
+scp root@10.10.10.61:/var/lib/libvirt/images/*.iso /var/lib/libvirt/images/
+# Kiểm tra images
 [root@KVM ~]# ls -al /var/lib/libvirt/images/
 total 18074212
 drwx--x--x. 2 root root       4096 Sep 19 19:39 .

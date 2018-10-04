@@ -12,7 +12,7 @@
 ## Bước 1: Tạo máy ảo CentOS7 bằng kvm 
 
 ``` 
-# CentOS7 Blank
+# CentOS7 Plesk
 qemu-img create -f qcow2 /tmp/centos73.qcow2 10G
 virt-install --virt-type kvm --name centos73 --ram 2048   --disk /tmp/centos73.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
 ```
