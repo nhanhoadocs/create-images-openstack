@@ -136,7 +136,7 @@ apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
 dpkg-reconfigure cloud-init
 ```
 
-Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
+Sau khi màn hình mở ra, lựa chọn `EC2`
 ```sh
 # Disable Warning đối với EC2 trên Ubuntu 16
 mkdir -p /var/lib/cloud/instance/warnings/
@@ -156,7 +156,7 @@ sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
 ```sh 
 echo '#' > /lib/udev/rules.d/75-persistent-net-generator.rules
-/etc/udev/rules.d/70-persistent-net.rules
+echo '#' > /etc/udev/rules.d/70-persistent-net.rules
 ```
 
 Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
@@ -171,18 +171,14 @@ update-grub
 
 Sau đó nhập lệnh `update-grub` để lưu lại.
 
+
 ## Bước 8: Cài đặt netplug
 
-- Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
+- Cài đặt netplug để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
 
 ``` sh
 apt-get install netplug -y
-wget https://raw.githubusercontent.com/longsube/Netplug-config/master/netplug
-```
-
-- Đưa file netplug vào thư mục /etc/netplug
-
-``` sh
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_ubuntu -O netplug
 mv netplug /etc/netplug/netplug
 chmod +x /etc/netplug/netplug
 ```
