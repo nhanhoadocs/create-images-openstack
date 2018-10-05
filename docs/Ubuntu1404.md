@@ -123,23 +123,24 @@ sudo apt-get dist-upgrade
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
+
+
+## Bước 4: Cấu hình để instance nhận metadata từ datasource
+
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
 ```sh
 apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
-```
-
-## Bước 4: Cấu hình để instance nhận metadata từ datasource
-
-```sh
 dpkg-reconfigure cloud-init
 ```
 
 Sau khi màn hình mở ra, lựa chọn `EC2`
 
-## Bước 5: Cấu hình user nhận ssh keys
+![](../images/Ubuntu/cloud-init.png)
 
-Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
+## Bước 5: Cấu hình user cho cloud-init
+
+Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys, password khi truyền vào, mặc định là `ubuntu` ở đây chúng ta sử dụng user `root`
 
 ``` sh
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
