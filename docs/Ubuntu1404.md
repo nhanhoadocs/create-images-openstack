@@ -69,7 +69,8 @@ Bật máy ảo lên, truy cập vào máy ảo. Lưu ý với lần đầu boot
 
 Cấu hình cho phép login root và xóa user `ubuntu` chỉnh `vi /etc/ssh/sshd_config`
 ```sh
-PermitRootLogin yes
+sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sudo service ssh restart
 ```
 
 Đặt passwd cho root
