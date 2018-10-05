@@ -32,7 +32,7 @@ Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
 - Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
-`virsh edit centos`
+`virsh edit centos62`
 
 với `centos*` là tên máy ảo
 
