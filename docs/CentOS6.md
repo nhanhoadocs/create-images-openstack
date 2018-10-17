@@ -234,6 +234,13 @@ yum -y install wget vim
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+- Shutoff VM 
+
+```sh 
+init 0 
+```
+
+- Trên virt-manager thừ
 
 ## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
