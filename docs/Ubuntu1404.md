@@ -124,8 +124,6 @@ sudo apt-get dist-upgrade
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-
-
 ## Bước 4: Cấu hình để instance nhận metadata từ datasource
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**

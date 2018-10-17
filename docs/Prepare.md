@@ -87,8 +87,15 @@ systemctl restart sshd
 
 Sử dụng `Xming Server` cài đặt trên Windows Client để thao tác với `virt-manager` qua X11 khi SSH vào Server KVM.
 
-![](https://i.imgur.com/1uoB8Sa.png)
+Download Xming : [https://sourceforge.net/projects/xming/](https://sourceforge.net/projects/xming/)
 
+Tiến hành cài đặt Xming-Server bình thường trên PC 
+
+Sau khi login SSH, cấu hình X11 sử dụng Xming Server (Ở đây sử dụng Xshell5)
+
+![](../images/centos/centos6_1.png)
+
+![](https://i.imgur.com/1uoB8Sa.png)
 
 Tạo folder channel cho các target của VM (Chỉ thực hiện 1 lần duy nhất)
 ```

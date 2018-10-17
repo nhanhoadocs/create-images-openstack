@@ -1,54 +1,211 @@
 # Hướng dẫn đóng image CentOS6 với QEMU Guest Agent + cloud-init
 
-## Chú ý:
+## Chú ý trong quá trình đóng images
 
-- Không sử dụng LVM 
+- KVM host đã được cài đặt sẵn sàng. [Cài đặt Môi trường để đóng images](Prepare.md)
+- Đã có file iso của CentOS6
+- Sử dụng `Standard` với định dạng `ext4` cho phân vùng OS không sử dụng LVM.
 - Sử dụng công cụ virt-manager hoặc web-virt để kết nối tới console máy ảo
 - Phiên bản OpenStack sử dụng là Queens
 - Hướng dẫn bao gồm 2 phần chính: thực hiện trên máy ảo cài OS và thực hiện trên KVM Host
+- Time zone VietNam
 
 ----------------------
 
-## Bước 1:Trên KVM host tạo máy ảo CentOS6 bằng commandline (Có thể tạo bằng giao diện)
+## Bước 1:Trên KVM host tạo máy ảo CentOS6
 
-``` 
-# CentOS6 Blank
-qemu-img create -f qcow2 /tmp/centos61.qcow2 10G
-virt-install --virt-type kvm --name centos61 --ram 2048   --disk /tmp/centos61.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-6.9-x86_64-minimal.iso
+- Đăng nhập ssh vào Node KVM bật `virt-manager`
+```sh
+virt-manager
 ```
 
-> **Một số lưu ý trong quá trình cài đặt**
-> 
-> - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
-> 
-> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng /
-> 
-> - Time zone VietNam
+- Trên Virt-manager thực hiện các step sau để cài OS
+
+Click chuột phải vào `QEMU/KVM` chọn `Details`
+
+![](../images/centos/centos6_install_01.png)
+
+Click vào tab `Storage` create một images mới
+
+![](../images/centos/centos6_install_02.png)
+
+Set tên và dung lượng cho images này là với định dạng là `.qcow2`
+
+![](../images/centos/centos6_install_03.png)
+
+Quay lại màn hình chính của Virt-manager chọn create VM mới
+
+![](../images/centos/centos6_install_04.png)
+
+Chọn boot từ file ISO
+
+![](../images/centos/centos6_install_05.png)
+
+Trỏ đường dẫn đến file ISO 
+
+![](../images/centos/centos6_install_06.png)
+
+![](../images/centos/centos6_install_07.png)
+
+![](../images/centos/centos6_install_08.png)
+
+Cấu hình RAM và CPU cho VM 
+
+![](../images/centos/centos6_install_09.png)
+
+Ở đây chúng ta sẽ chọn images `centos6.qcow2` đã được tạo
+
+![](../images/centos/centos6_install_10.png)
+
+![](../images/centos/centos6_install_11.png)
+
+![](../images/centos/centos6_install_12.png)
+
+Đặt tên cho VM, click vào `Customize...` để bổ sung các cấu hình khác
+
+![](../images/centos/centos6_install_13.png)
+
+Cấu hình cho CPU
+
+![](../images/centos/centos6_install_14.png)
+
+Cấu hình boot, chỉnh lại menu boot để boot ISO cài đặt OS
+
+![](../images/centos/centos6_install_15.png)
+
+Cấu hình lại file ISO
+
+![](../images/centos/centos6_install_16.png)
+
+![](../images/centos/centos6_install_17.png)
+
+![](../images/centos/centos6_install_18.png)
+
+![](../images/centos/centos6_install_19.png)
+
+Cấu hình NIC mode `virtio`
+
+![](../images/centos/centos6_install_20.png)
+
+Kết thúc quá trình cấu hình, bắt đầu quá trình cài đặt. 
+
+![](../images/centos/centos6_install_21.png)
+
+![](../images/centos/centos6_install_22.png)
+
+Bỏ qua quá trình check 
+
+![](../images/centos/centos6_install_23.png)
+
+![](../images/centos/centos6_install_24.png)
+
+Cấu hình ngôn ngữ chọn `English(English)`
+
+![](../images/centos/centos6_install_25.png)
+
+Cấu hình language keyboard chọn `U.S English`
+
+![](../images/centos/centos6_install_26.png)
+
+Chọn `Basic Storage Devices`
+
+![](../images/centos/centos6_install_27.png)
+
+Confirm xóa toàn bộ dữ liệu trên disk cài đặt OS
+
+![](../images/centos/centos6_install_28.png)
+
+Cấu hình network
+
+![](../images/centos/centos6_install_29.png)
+
+![](../images/centos/centos6_install_30.png)
+
+Enable connect automatically (Cho phép Interface có thể nhận được IP khi boot máy)
+
+![](../images/centos/centos6_install_31.png)
+
+![](../images/centos/centos6_install_32.png)
+
+Cấu hình time zone Asia/Ho_Chi_Minh 
+
+![](../images/centos/centos6_install_33.png)
+
+Cấu hình root password cho VM 
+
+![](../images/centos/centos6_install_34.png)
+
+Chọn `Create Custom Layout` để cấu hình phân vùng disk cài OS
+
+![](../images/centos/centos6_install_35.png)
+
+Chọn phân vùng free disk và `Create`
+
+![](../images/centos/centos6_install_36.png)
+
+Chọn cấu hình phân vùng disk theo `Standard Partition` 
+
+![](../images/centos/centos6_install_37.png)
+
+Cấu hình toàn bộ phân vùng trống của disk mount vào `/` với định dạng `ext4`
+
+![](../images/centos/centos6_install_38.png)
+
+![](../images/centos/centos6_install_39.png)
+
+Confirm quá trình phân vùng lại ổ đĩa để cài OS
+
+![](../images/centos/centos6_install_40.png)
+
+![](../images/centos/centos6_install_41.png)
+
+![](../images/centos/centos6_install_42.png)
+
+Tiến hành xác nhận cài đặt OS
+
+![](../images/centos/centos6_install_43.png)
+
+![](../images/centos/centos6_install_44.png)
+
+![](../images/centos/centos6_install_45.png)
 
 ## Bước 2: Xử lí trên KVM host 
 
 Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
-- Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
+- Chỉnh sửa file `.xml` của máy ảo
 
-`virsh edit centos61`
+```sh 
+virsh edit centos6
+```
 
-với `centos*` là tên máy ảo
+> Với `centos6` là tên máy ảo
+
+Bổ sung hoặc chỉnh sửa `channel` trong <devices>  mục đích để HOST KVM có thể giao tiếp với máy ảo qua qemu-guest-agent
 
 ``` sh
+# Nội dung chỉnh sửa
 ...
 <devices>
  <channel type='unix'>
       <target type='virtio' name='org.qemu.guest_agent.0'/>
       <address type='virtio-serial' controller='0' bus='0' port='1'/>
  </channel>
+ ...
 </devices>
 ...
 ```
 
-## Bước 3: Cấu hình máy ảo và cài đặt các package
+## Bước 3: Cấu hình máy ảo và cài đặt các package (Thao tác trên VM CentOS6)
 
 - Bật máy ảo lên
+
+- Disable IPv6
+```sh
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+sysctl -p
+```
 
 - Cài đặt epel-release & Update 
 ```
@@ -70,19 +227,10 @@ sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
 init 6
 ```
 
-- Disable IPv6
-```sh
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-sysctl -p
-```
-
 - Cài đặt các packet cần thiết 
 
 ```sh
-yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
+yum -y install wget vim 
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
@@ -136,7 +284,7 @@ mv netplug /etc/netplug.d/netplug
 chmod +x /etc/netplug.d/netplug
 ```
 
-- Disable Default routing
+- Disable Default routing (để VM có thể nhận metadata từ Cloud-init nhanh hơn)
 
 ``` sh
 echo "NOZEROCONF=yes" >> /etc/sysconfig/network
@@ -145,7 +293,7 @@ echo "NOZEROCONF=yes" >> /etc/sysconfig/network
 - Disable sinh ra file `70-persistent-net.rules` (Tránh việc thay đổi label card mạng)
 
 ``` sh 
-echo "#" > /lib/udev/rules.d/75-persistent-net-generator.rules
+echo "" > /lib/udev/rules.d/75-persistent-net-generator.rules
 ```
 
 - Cài đặt, kích hoạt và khởi động qemu-guest-agent service
@@ -156,10 +304,21 @@ chkconfig qemu-ga on
 service qemu-ga start
 ```
 
-> `qemu-ga --version`
-> 
 > `qemu-ga --version` Hiện Version của qemu trên centos6 là 0.12
+> 
+> `service qemu-ga status` Chắc chắn qemu-ga running OK
 
+- Đảm bảo interface eth0 có thể nhận DHCP (Remove config static IP của VM đóng template)
+```
+cat << EOF >> /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE=eth0
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=dhcp
+IPV4_FAILURE_FATAL=yes
+NAME="System eth0"
+EOF
+```
 
 - Clean all 
 
@@ -181,13 +340,13 @@ poweroff
 
 ``` sh
 # Xóa bỏ MAC address details
-virt-sysprep -d centos61
+virt-sysprep -d centos6
 
-# Undefine the libvirt domain
-virsh undefine centos61
+# Undefine the libvirt domain (Ở bước này nếu có thao tác snapshot trên KVM có thể bỏ qua)
+virsh undefine centos6
 
 # Giảm kích thước image
-virt-sparsify --compress /tmp/centos61.qcow2 CentOS6-64bit-2018.img
+virt-sparsify --compress /var/lib/libvirt/images/centos6.qcow2 CentOS6-64bit-2018.img
 ```
 
 > **Lưu ý:**
@@ -196,7 +355,12 @@ virt-sparsify --compress /tmp/centos61.qcow2 CentOS6-64bit-2018.img
 
 ## Bước 6: Upload image lên glance
 
-- Di chuyển image tới máy CTL, sử dụng câu lệnh sau
+- Copy Images sang Node Controller
+```sh
+scp CentOS6-64bit-2018.img root@<controller_host>:/root/
+```
+
+- Đăng nhập vào Node Controller sử dụng câu lệnh sau để Upload Images
 
 ``` sh
 glance image-create --name CentOS6-64bit-2018 \
