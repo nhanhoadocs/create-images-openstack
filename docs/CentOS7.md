@@ -219,7 +219,32 @@ systemctl restart sshd
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
+- Shutdown VM 
+
+![](../images/centos7/snap_01.png)
+
+- Click vào tab Snapshot
+
+![](../images/centos7/snap_02.png)
+
+- Tạo mới bản snapshot
+
+![](../images/centos7/snap_03.png)
+
+- Đặt tên cho bản snapshot
+
+![](../images/centos7/snap_04.png)
+
+- Hoàn tất snapshot
+
+![](../images/centos7/snap_05.png)
+
 ## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
+
+- Start lại và ssh vào VM 
+```sh 
+ssh root@<ip_VM>
+```
 
 - Cài đặt acpid nhằm cho phép hypervisor có thể reboot hoặc shutdown instance.
 

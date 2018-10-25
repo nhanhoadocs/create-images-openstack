@@ -235,15 +235,32 @@ yum -y install wget vim
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
-- Shutoff VM 
+- Shutdown VM 
 
-```sh 
-init 0 
-```
+![](../images/centos/snap_01.png)
 
-- Trên virt-manager thừ
+- Click vào tab Snapshot
+
+![](../images/centos/snap_02.png)
+
+- Tạo mới bản snapshot
+
+![](../images/centos/snap_03.png)
+
+- Đặt tên cho bản snapshot
+
+![](../images/centos/snap_04.png)
+
+- Hoàn tất snapshot
+
+![](../images/centos/snap_05.png)
 
 ## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
+
+- Start lại và ssh vào VM 
+```sh 
+ssh root@<ip_VM>
+```
 
 - Cấu hình network 
 
