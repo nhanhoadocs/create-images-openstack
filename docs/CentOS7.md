@@ -242,9 +242,9 @@ systemctl restart sshd
 
 ### Cài đặt app (nếu có) 
 
-- [DA](install_DA.md)
-- [Plesk](install_Plesk)
-- [WHM](install_WHM)
+- [DA](Install_DA.md)
+- [Plesk](Install_Plesk)
+- [WHM](Install_WHM)
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
