@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image Ubuntu 14.04 với cloud-init và QEMU Guest Agent (không dùng LVM)
+# Hướng dẫn đóng image Ubuntu 16.04 với cloud-init và QEMU Guest Agent (không dùng LVM)
 
 ## Chú ý:
 
