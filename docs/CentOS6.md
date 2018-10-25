@@ -234,6 +234,7 @@ yum -y install wget vim
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
 - Shutoff VM 
 
 ```sh 

@@ -1,29 +1,155 @@
 # Hướng dẫn đóng image CentOS7 với QEMU Guest Agent + cloud-init
 
-## Chú ý:
+### Chú ý trong quá trình đóng images
 
-- Không sử dụng LVM 
+- KVM host đã được cài đặt sẵn sàng. [Cài đặt Môi trường để đóng images](Prepare.md)
+- Đã có file iso của CentOS7
+- Sử dụng `Standard` với định dạng `ext4` cho phân vùng OS không sử dụng LVM.
 - Sử dụng công cụ virt-manager hoặc web-virt để kết nối tới console máy ảo
 - Phiên bản OpenStack sử dụng là Queens
 - Hướng dẫn bao gồm 2 phần chính: thực hiện trên máy ảo cài OS và thực hiện trên KVM Host
+- Time zone VietNam
 
 ----------------------
 
-## Bước 1: Tạo máy ảo CentOS7 bằng kvm 
+## Bước 1:Trên KVM host tạo máy ảo CentOS6
 
-``` 
-# CentOS7 Blank
-qemu-img create -f qcow2 /tmp/centos71.qcow2 10G
-virt-install --virt-type kvm --name centos71 --ram 2048   --disk /tmp/centos71.qcow2,format=qcow2   --network bridge=br0  --graphics vnc,listen=0.0.0.0 --noautoconsole   --os-type=linux --os-variant=rhel7   --location=/var/lib/libvirt/images/CentOS-7-x86_64-Minimal-1804.iso
+- Đăng nhập ssh vào Node KVM bật `virt-manager`
+```sh
+virt-manager
 ```
 
-> **Một số lưu ý trong quá trình cài đặt**
-> 
-> - Thay đổi Ethernet status sang `ON` (mặc định là OFF). Bên cạnh đó, hãy chắc chắn máy ảo nhận được dhcp
-> 
-> - Đối với phân vùng dữ liệu sử dụng Standard không sử dụng LVM, định dạng `ext4` cho phân dùng 
-> 
-> - Time zone VietNam
+- Trên Virt-manager thực hiện các step sau để cài OS
+
+Click chuột phải vào `QEMU/KVM` chọn `Details`
+
+![](../images/centos7/centos7_install_01.png)
+
+Click vào tab `Storage` create một images mới
+
+![](../images/centos7/centos7_install_02.png)
+
+Set tên và dung lượng cho images này là với định dạng là `.qcow2`
+
+![](../images/centos7/centos7_install_03.png)
+
+Quay lại màn hình chính của Virt-manager chọn create VM mới
+
+![](../images/centos7/centos7_install_04.png)
+
+Chọn boot từ file ISO
+
+![](../images/centos7/centos7_install_05.png)
+
+
+Trỏ đường dẫn đến file ISO 
+
+![](../images/centos7/centos7_install_06.png)
+
+![](../images/centos7/centos7_install_07.png)
+
+Cấu hình RAM và CPU cho VM 
+
+![](../images/centos7/centos7_install_08.png)
+
+Ở đây chúng ta sẽ chọn images `centos6.qcow2` đã được tạo
+
+![](../images/centos7/centos7_install_09.png)
+
+![](../images/centos7/centos7_install_10.png)
+
+![](../images/centos7/centos7_install_11.png)
+
+Đặt tên cho VM, click vào `Customize...` để bổ sung các cấu hình khác
+
+![](../images/centos7/centos7_install_12.png)
+
+
+Cấu hình cho CPU
+
+![](../images/centos7/centos7_install_13.png)
+
+Cấu hình boot, chỉnh lại menu boot để boot ISO cài đặt OS
+
+![](../images/centos7/centos7_install_14.png)
+
+Cấu hình lại file ISO
+
+![](../images/centos7/centos7_install_15.png)
+
+![](../images/centos7/centos7_install_16.png)
+
+![](../images/centos7/centos7_install_17.png)
+
+![](../images/centos7/centos7_install_18.png)
+
+Cấu hình NIC mode `virtio` và  bắt đầu quá trình cài đặt. 
+
+![](../images/centos7/centos7_install_19.png)
+
+Chọn `Install CentOS7` để tiến hành cài đặt 
+
+![](../images/centos7/centos7_install_20.png)
+
+
+Cấu hình ngôn ngữ chọn `English(English)`
+
+![](../images/centos7/centos7_install_21.png)
+
+Cấu hình timezone về Ho_Chi_Minh
+
+![](../images/centos7/centos7_install_22.png)
+
+![](../images/centos7/centos7_install_23.png)
+
+Cấu hình disk để cài đặt 
+
+![](../images/centos7/centos7_install_24.png)
+
+![](../images/centos7/centos7_install_25.png)
+
+Chọn `Standard Partition` cho ổ disk 
+
+![](../images/centos7/centos7_install_26.png)
+
+Cấu hình mount point `/` cho toàn bộ disk
+
+![](../images/centos7/centos7_install_27.png)
+
+Định dạng lại `ext4` cho phân vùng
+
+![](../images/centos7/centos7_install_28.png)
+
+![](../images/centos7/centos7_install_29.png)
+
+Kết thúc quá trình cấu hình disk 
+
+![](../images/centos7/centos7_install_30.png)
+
+Confirm quá trình chia lại partition cho disk 
+
+![](../images/centos7/centos7_install_31.png)
+
+Cấu hình network 
+
+![](../images/centos7/centos7_install_32.png)
+
+Turn on network cho interface và set hostname 
+
+![](../images/centos7/centos7_install_33.png)
+
+Kết thúc cấu hình, bắt đầu quá trình cài đặt OS
+
+![](../images/centos7/centos7_install_34.png)
+
+Setup passwd cho root
+
+![](../images/centos7/centos7_install_35.png)
+
+![](../images/centos7/centos7_install_36.png)
+
+Reboot lại VM sau khi cài đặt hoàn tất
+![](../images/centos7/centos7_install_37.png)
 
 ## Bước 2: Xử lí trên KVM host 
 
@@ -31,7 +157,7 @@ Tiến hành tắt máy ảo và xử lí một số bước sau trên KVM host:
 
 - Chỉnh sửa file `.xml` của máy ảo, bổ sung chỉnh sửa `channel` trong <devices> (Thường thì CentOS mặc định đã cấu hình sẵn phần này) mục đích để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent
 
-`virsh edit centos71`
+`virsh edit centos7.0`
 
 với `centos*` là tên máy ảo
 
@@ -54,12 +180,6 @@ với `centos*` là tên máy ảo
 ```
 yum install epel-release -y
 yum update -y
-# Bỏ qua `epel/x86_64/updateinfo         FAILED` bằng cách
-mv /etc/yum.repos.d/epel-testing.repo .
-yum update -y
-mv epel-testing.repo /etc/yum.repos.d/
-yum update -y 
-```
 
 - Stop firewalld Disable Selinux
 
@@ -95,14 +215,6 @@ chmod +x /usr/sbin/dhclient-script
 ```sh
 sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config 
 systemctl restart sshd 
-```
-
-- Cài đặt các packet cần thiết (Cho)
-
-```sh
-yum -y install vnstat mlocate wget iotop iptraf
-# security tmp
-echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
@@ -196,7 +308,7 @@ poweroff
 # Xóa bỏ MAC address details
 virt-sysprep -d centos71
 
-# Undefine the libvirt domain
+# Undefine the libvirt domain (Ở bước này nếu có thao tác snapshot trên KVM có thể bỏ qua)
 virsh undefine centos71
 
 # Giảm kích thước image
@@ -208,6 +320,11 @@ virt-sparsify --compress /tmp/centos71.qcow2 CentOS7-64bit-2018.img
 > Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
 ## Bước 6: Upload image lên glance
+
+- Copy Images sang Node Controller
+```sh
+scp CentOS7-64bit-2018.img root@<controller_host>:/root/
+```
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
