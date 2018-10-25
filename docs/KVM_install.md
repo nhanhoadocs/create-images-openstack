@@ -43,6 +43,11 @@ cat /proc/cpuinfo| egrep -c "vmx|svm"
 
 > Nếu OUTPUT câu lệnh trên >0 thì đã enable vmx OK 
 
+Install epel-release và update 
+```sh 
+yum install epel-release -y && yum update -y 
+```
+
 Cài đặt Vm tools
 ```
 yum install -y open-vm-tools wget
