@@ -10,6 +10,8 @@
 
 [- Đóng Images CentOS7](docs/CentOS7.md)
 
+[- Đóng Images Ubuntu1204](docs/Ubuntu1204.md)
+
 [- Đóng Images Ubuntu1404](docs/Ubuntu1404.md)
 
 [- Đóng Images Ubuntu1604](docs/Ubuntu1604.md)

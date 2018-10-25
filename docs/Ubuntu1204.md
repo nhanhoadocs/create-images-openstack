@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image Ubuntu 14.04 với cloud-init (không dùng LVM)
+# Hướng dẫn đóng image Ubuntu 12.04 với cloud-init (không dùng LVM)
 
 ## Chú ý:
 
