@@ -6,22 +6,15 @@
 
 ## Linux
 
-CentOS6
-
 [- Đóng Images CentOS6](docs/CentOS6.md)
 
-CentOS7
-
 [- Đóng Images CentOS7](docs/CentOS7.md)
-
-Ubuntu
 
 [- Đóng Images Ubuntu1404](docs/Ubuntu1404.md)
 
 [- Đóng Images Ubuntu1604](docs/Ubuntu1604.md)
 
 [- Đóng Images Ubuntu1804](docs/Ubuntu1804.md)
-
 
 
 ## Windows
