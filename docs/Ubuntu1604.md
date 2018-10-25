@@ -10,38 +10,9 @@
 
 ----------------------
 
-## Bước 1: Tạo máy ảo bằng kvm
+## Bước 1: Tạo máy ảo bằng virt-manager
 
-Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy ảo
-
-Ở đây mình sử dụng virt-install
-
-``` sh
-qemu-img create -f qcow2 /tmp/ubuntu16.qcow2 10G
-
-virt-install --virt-type kvm --name ubuntu16 --ram 1024 \
-  --cdrom=/var/lib/libvirt/images/ubuntu-14.04.4-server-amd64.iso \
-  --disk /tmp/ubuntu16.qcow2,format=qcow2 \
-  --network bridge=br0 \
-  --graphics vnc,listen=0.0.0.0 --noautoconsole \
-  --os-type=linux --os-variant=ubuntu16.04
-```
-
-**Một số lưu ý trong quá trình cài đặt**
-
-- Đối với hostname, các bạn có thể đặt mặc định bởi ta dùng cloud-init để set sau.
-- Đối với cấu hình partion, để standard cloud-init với 1 phân vùng root (/) để máy ảo có thể tự resize theo flavor mới.
-
-<img src="http://i.imgur.com/hI7aW14.png">
-
-- Đối với phần `software selection`, ta lựa chọn `OpenSSH server`
-
-<img src="http://i.imgur.com/oLB72zc.png">
-
-- Install GRUB boot loader
-
-- Sau khi cài đặt xong, chọn `Continue` để reboot máy ảo.
-Lưu ý: Có một số trường hợp đối với ubuntu16.04, máy ảo sẽ không reboot kể cả khi nó báo là sẽ reboot
+Các bước tạo tương tự Ubuntu12
 
 ## Bước 2 : Tắt máy ảo, xử lí trên KVM host
 
@@ -61,6 +32,9 @@ với `ubuntu16` là tên máy ảo
 </devices>
 ...
 ```
+> Nếu đã tồn tại `channel` đổi port channel này về `port='2'` và add channel bình thường
+
+![](../images/ubuntu12/u12_install_54.png)
 
 
 ## Bước 3: Cài các dịch vụ cần thiết
@@ -123,6 +97,15 @@ sudo apt-get dist-upgrade
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
+- Shutdown VM 
+
+![](../images/kvm/shutdown.png)
+
+- Tiến hành truy cập tab `Snapshot` để snapshot
+
+![](../images/kvm/snap.png)
+
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
@@ -237,16 +220,11 @@ init 0
 ## Bước 13: Clean up image
 
 ```sh
-virt-sysprep -d ubuntu16.04
+virt-sysprep -d ubuntu16
 ```
 
-## Bước 14: Undefine libvirt domain
 
-```sh
-virsh undefine ubuntu16.04
-```
-
-## Bước 15: Giảm kích thước máy ảo
+## Bước 14: Giảm kích thước máy ảo
 
 ```sh
 virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img
@@ -256,9 +234,9 @@ virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 16: Upload image lên glance
+## Bước 15: Upload image lên glance
 
-- Di chuyển image tới máy CTL, sử dụng câu lệnh sau
+- Copy image tới máy CTL, sử dụng câu lệnh sau
 
 ``` sh
 glance image-create --name ubuntu16-64bit-2018 \

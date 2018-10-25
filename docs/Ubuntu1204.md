@@ -5,44 +5,121 @@
 - Để cài được Cloud init thì chủ sử dụng được .iso Ubuntu12.04.4 (KHÔNG SỬ DỤNG Ubuntu12.04.5 )
 - Hướng dẫn này dành cho các image không sử dụng LVM
 - Sử dụng công cụ virt-manager hoặc web-virt để kết nối tới console máy ảo
-- OS cài đặt KVM là Centos
+- OS node KVM là Centos7
 - Phiên bản OpenStack sử dụng là Queens
 - Hướng dẫn bao gồm 2 phần chính: thực hiện trên máy ảo cài OS và thực hiện trên KVM Host
 
 ----------------------
 
-## Bước 1: Tạo máy ảo bằng kvm
+## Bước 1: Tạo máy ảo bằng virt-manager
 
-Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy ảo
+![](../images/ubuntu12/u12_install_00.png)
 
-Ở đây mình sử dụng virt-install
+![](../images/ubuntu12/u12_install_01.png)
 
-``` sh
-qemu-img create -f qcow2 /tmp/ubuntu12.qcow2 10G
+![](../images/ubuntu12/u12_install_02.png)
 
-virt-install --virt-type kvm --name ubuntu12 --ram 1024 \
-  --cdrom=/var/lib/libvirt/images/ubuntu-12.04.4-server-amd64.iso \
-  --disk /tmp/ubuntu12.qcow2,format=qcow2 \
-  --network bridge=br0 \
-  --graphics vnc,listen=0.0.0.0 --noautoconsole \
-  --os-type=linux --os-variant=ubuntu12.04
-```
+![](../images/ubuntu12/u12_install_03.png)
 
-**Một số lưu ý trong quá trình cài đặt**
+![](../images/ubuntu12/u12_install_04.png)
 
-- Đối với hostname, các bạn có thể đặt mặc định bởi ta dùng cloud-init để set sau.
-- Đối với cấu hình partion, để standard cloud-init với 1 phân vùng root (/) để máy ảo có thể tự resize theo flavor mới.
+![](../images/ubuntu12/u12_install_05.png)
 
-<img src="http://i.imgur.com/hI7aW14.png">
+![](../images/ubuntu12/u12_install_06.png)
 
-- Đối với phần `software selection`, ta lựa chọn `OpenSSH server`
+![](../images/ubuntu12/u12_install_07.png)
 
-<img src="http://i.imgur.com/oLB72zc.png">
+![](../images/ubuntu12/u12_install_08.png)
 
-- Install GRUB boot loader
+![](../images/ubuntu12/u12_install_09.png)
 
-- Sau khi cài đặt xong, chọn `Continue` để reboot máy ảo.
-Lưu ý: Có một số trường hợp đối với ubuntu12.04, máy ảo sẽ không reboot kể cả khi nó báo là sẽ reboot
+![](../images/ubuntu12/u12_install_10.png)
+
+![](../images/ubuntu12/u12_install_11.png)
+
+![](../images/ubuntu12/u12_install_12.png)
+
+![](../images/ubuntu12/u12_install_13.png)
+
+![](../images/ubuntu12/u12_install_14.png)
+
+![](../images/ubuntu12/u12_install_15.png)
+
+![](../images/ubuntu12/u12_install_16.png)
+
+![](../images/ubuntu12/u12_install_17.png)
+
+![](../images/ubuntu12/u12_install_18.png)
+
+![](../images/ubuntu12/u12_install_19.png)
+
+![](../images/ubuntu12/u12_install_20.png)
+
+![](../images/ubuntu12/u12_install_21.png)
+
+![](../images/ubuntu12/u12_install_22.png)
+
+![](../images/ubuntu12/u12_install_23.png)
+
+![](../images/ubuntu12/u12_install_24.png)
+
+![](../images/ubuntu12/u12_install_25.png)
+
+![](../images/ubuntu12/u12_install_26.png)
+
+![](../images/ubuntu12/u12_install_27.png)
+
+![](../images/ubuntu12/u12_install_28.png)
+
+![](../images/ubuntu12/u12_install_29.png)
+
+![](../images/ubuntu12/u12_install_30.png)
+
+![](../images/ubuntu12/u12_install_31.png)
+
+![](../images/ubuntu12/u12_install_32.png)
+
+![](../images/ubuntu12/u12_install_33.png)
+
+![](../images/ubuntu12/u12_install_34.png)
+
+![](../images/ubuntu12/u12_install_35.png)
+
+![](../images/ubuntu12/u12_install_36.png)
+
+![](../images/ubuntu12/u12_install_37.png)
+
+![](../images/ubuntu12/u12_install_38.png)
+
+![](../images/ubuntu12/u12_install_39.png)
+
+![](../images/ubuntu12/u12_install_40.png)
+
+![](../images/ubuntu12/u12_install_41.png)
+
+![](../images/ubuntu12/u12_install_42.png)
+
+![](../images/ubuntu12/u12_install_43.png)
+
+![](../images/ubuntu12/u12_install_44.png)
+
+![](../images/ubuntu12/u12_install_45.png)
+
+![](../images/ubuntu12/u12_install_46.png)
+
+![](../images/ubuntu12/u12_install_47.png)
+
+![](../images/ubuntu12/u12_install_48.png)
+
+![](../images/ubuntu12/u12_install_49.png)
+
+![](../images/ubuntu12/u12_install_50.png)
+
+![](../images/ubuntu12/u12_install_51.png)
+
+![](../images/ubuntu12/u12_install_52.png)
+
+![](../images/ubuntu12/u12_install_53.png)
 
 ## Bước 2 : Tắt máy ảo, xử lí trên KVM host
 
@@ -62,6 +139,10 @@ với `ubuntu12` là tên máy ảo
 </devices>
 ...
 ```
+
+> Nếu đã tồn tại `channel` đổi port channel này về `port='2'` và add channel bình thường
+
+![](../images/ubuntu12/u12_install_54.png)
 
 
 ## Bước 3: Cài các dịch vụ cần thiết
@@ -123,6 +204,14 @@ cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
+- Shutdown VM 
+
+![](../images/kvm/shutdown.png)
+
+- Tiến hành truy cập tab `Snapshot` để snapshot
+
+![](../images/kvm/snap.png)
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
@@ -188,6 +277,8 @@ sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
 
 Ubuntu 12 không hỗ trợ `qemu-guest-agent` sẽ không hỗ trợ tính năng đổi password bằng `nova set-password`
 
+Chúng ta sẽ phải set password qua SingleMode trên Console
+
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 
 ``` sh
@@ -208,16 +299,10 @@ init 0
 ## Bước 13: Clean up image
 
 ```
-virt-sysprep -d ubuntu12.04
+virt-sysprep -d ubuntu12
 ```
 
-## Bước 14: Undefine libvirt domain
-
-```
-virsh undefine ubuntu12.04
-```
-
-## Bước 15: Giảm kích thước máy ảo
+## Bước 14: Giảm kích thước máy ảo
 
 ```sh
 virt-sparsify --compress /tmp/ubuntu12.qcow2 /root/ubuntu12.img
@@ -227,9 +312,9 @@ virt-sparsify --compress /tmp/ubuntu12.qcow2 /root/ubuntu12.img
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 16: Upload image lên glance
+## Bước 15: Upload image lên glance
 
-- Di chuyển image tới máy CTL, sử dụng câu lệnh sau
+- Copy image tới máy CTL, sử dụng câu lệnh sau
 
 ``` sh
 glance image-create --name ubuntu12-64bit-2018 \
@@ -241,12 +326,7 @@ glance image-create --name ubuntu12-64bit-2018 \
 --progress
 ```
 
-- Kiểm tra xem image đã upload thành công chưa, kiểm tra metadata của image đã có `hw_qemu_guest_agent` hay chưa.
-
-<img src="https://i.imgur.com/RxeuiFr.png">
-
-<img src="https://i.imgur.com/whh1wh0.png">
-
+- Images đã sẵn sàng để Create máy ảo.
 
 **Link tham khảo:**
 

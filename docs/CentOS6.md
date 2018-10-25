@@ -237,23 +237,11 @@ yum -y install wget vim
 
 - Shutdown VM 
 
-![](../images/centos/snap_01.png)
+![](../images/kvm/shutdown.png)
 
-- Click vào tab Snapshot
+- Tiến hành truy cập tab `Snapshot` để snapshot
 
-![](../images/centos/snap_02.png)
-
-- Tạo mới bản snapshot
-
-![](../images/centos/snap_03.png)
-
-- Đặt tên cho bản snapshot
-
-![](../images/centos/snap_04.png)
-
-- Hoàn tất snapshot
-
-![](../images/centos/snap_05.png)
+![](../images/kvm/snap.png)
 
 ### Cài đặt app (nếu có) 
 
@@ -323,7 +311,7 @@ chmod +x /etc/netplug.d/netplug
 echo "NOZEROCONF=yes" >> /etc/sysconfig/network
 ```
 
-- Disable sinh ra file `70-persistent-net.rules` (Tránh việc thay đổi label card mạng)
+- Xóa nội dung `75-persistent-net-generator.rules` (Tránh việc thay đổi label card mạng)
 
 ``` sh 
 echo "" > /lib/udev/rules.d/75-persistent-net-generator.rules

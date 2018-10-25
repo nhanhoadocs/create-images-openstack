@@ -221,24 +221,11 @@ systemctl restart sshd
 
 - Shutdown VM 
 
-![](../images/centos7/snap_01.png)
+![](../images/kvm/shutdown.png)
 
-- Click vào tab Snapshot
+- Tiến hành truy cập tab `Snapshot` để snapshot
 
-![](../images/centos7/snap_02.png)
-
-- Tạo mới bản snapshot
-
-![](../images/centos7/snap_03.png)
-
-- Đặt tên cho bản snapshot
-
-![](../images/centos7/snap_04.png)
-
-- Hoàn tất snapshot
-
-![](../images/centos7/snap_05.png)
-
+![](../images/kvm/snap.png)
 
 ### Cài đặt app (nếu có) 
 

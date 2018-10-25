@@ -1,22 +1,82 @@
-# Đổi thông tin DA cả CentOS6 và CentOS7
+# Các bước kiểm tra Images cơ bản sau khi đóng Template
 
-```sh
-# Login vào Server 
+Chúng ta sẽ tạo VM từ Images này và kiểm tra 
 
-# Check IP Public server `ip a`
-cd /usr/local/directadmin/scripts
-./ipswap.sh 192.168.122.36 <ip-public-server>
+## B1: Kiểm tra có thể tạo dung lượng min_size bao nhiêu (Dung lượng này = dung lượng file `qcow2` chúng ta tạo lúc đóng Images)
 
-# Reboot
-init 6 
+Tạo VM với dung lượng Volume = min_size (Ở đây linux là 10GB, windows trắng là 25GB,...) xem có tạo được không 
 
-# Kiểm tra thông tin và đăng nhập 
-cat /usr/local/directadmin/scripts/*.txt
+![](../images/check_images/vol1.png)
 
-# Truy cập http://<ip-public-server>:2222
+## B2: Kiểm tra khả năng tự động Extend của Volume 
+
+Tạo VM với dung lượng lớn hơn min_size, sau khi tạo VM thì tiến hành login vào VM kiểm tra xem VM có nhận đủ dung lượng root disk không 
+
+![](../images/check_images/vol2.png)
+
+## B3: Kiểm tra truyền password qua cloud-init 
+
+Truyền cloud-init khi create VM, Login thử bằng password truyền vào xem có login được không 
+
+![](../images/check_images/cloud-init.png)
+
+## B4: Add thêm IP xem có nhận không 
+
+![](../images/check_images/addip.png)
+
+## B5: Thử tính năng reset password qua nova
+
+Để VM running và login vào Controller node sử dụng `nova set-password <VM_ID>` để set password cho VM xem có nhận password mới không 
+
+Lấy ID của VM 
+![](../images/check_images/id.png)
+
+Set paswd mới cho VM 
+
+![](../images/check_images/setpasswd.png)
+
+## B6: Kiểm tra xem tab log của VM 
+
+Trong quá trình boot VM tiến hành truy cập tab `log` xem có log MV hiển thị không 
+
+![](../images/check_images/log.png)
+
+## B7: Kiểm tra app của VM 
+
+Bước này chúng ta kiểm tra hoạt động của các app trên VM sau khi running như DA, Plesk, WHM
+
+# Đổi thông tin DA sau khi tạo VM từ Template
+
+- Login vào VM 
+```sh 
+ssh root@<VM_IP>
 ```
 
-# Đổi thông tin IP WHM
+- Check IP Public server 
+```sh 
+ip a
+```
+
+- Chạy script change IP 
+```sh 
+cd /usr/local/directadmin/scripts
+./ipswap.sh 192.168.122.36 <ip-public-server>
+```
+
+- Reboot
+```sh 
+init 6 
+```
+
+- Kiểm tra thông tin và đăng nhập 
+```sh 
+cat /usr/local/directadmin/scripts/*.txt
+```
+
+- Truy cập Dashboard DA kiểm tra 
+http://<ip-public-server>:2222
+
+# Đổi thông tin IP WHM sau khi tạo VM từ Template
 
 CentOS6
 ``` sh
@@ -27,7 +87,7 @@ CentOS6
 192.168.122.109
 # Replace IP
 Example: 
-replace 123.30.145.16 103.28.36.104 -- /var/cpanel/mainip
+replace 123.30.145.16 103.28.36.104 -- /var/cpanel/mainip 
 replace 123.30.145.16 103.28.36.104 -- /etc/hosts
 replace 123.30.145.16 103.28.36.104 -- /etc/wwwacct.conf
 replace 123.30.145.16 103.28.36.104 -- /usr/local/apache/conf/httpd.conf
@@ -69,7 +129,7 @@ Truy cập
 - Cpanel: https://<ip-public-server>:2087
 - Mail: https://<ip-public-server>:2095
 
-# Đổi thông tin IP Plesk 
+# Đổi thông tin IP Plesk sau khi tạo VM từ Template
 
 Đổi thông tin IP Plesk
 
@@ -89,98 +149,6 @@ https://support.plesk.com/hc/en-us/articles/115001761193-How-to-change-the-IP-ad
 https://docs.plesk.com/en-US/12.5/advanced-administration-guide-win/system-maintenance/changing-ip-addresses.49727/
 ```
 
-
 Truy cập 
 - Plesk: https://<ip-public-server>:2083
 
-# Hướng dẫn thay đổi password
-
-## Cách 1: sử dụng nova API (lưu ý máy ảo phải đang bật)
-
-Trên node Controller, thực hiện lệnh và nhập password cần đổi
-
-``` sh
-root@controller:# nova set-password CentOS7
-New password:
-Again:
-```
-
-với `CentOS7` là tên máy ảo
-
-## Cách 2: sử dụng trực tiếp libvirt
-
-Xác định vị trí máy ảo đang nằm trên node compute nào. VD máy ảo đang sử dụng là CentOS7
-
-`root@controller:# nova show CentOS7`
-
-Kết quả:
-
-``` sh
-+--------------------------------------+----------------------------------------------------------------------------------------------------------+
-| Property                             | Value                                                                                                    |
-+--------------------------------------+----------------------------------------------------------------------------------------------------------+
-| OS-DCF:diskConfig                    | AUTO                                                                                                     |
-| OS-EXT-AZ:availability_zone          | nova                                                                                                     |
-| OS-EXT-SRV-ATTR:host                 | compute2                                                                                                 |
-| OS-EXT-SRV-ATTR:hostname             | CentOS7                                                                                                   |
-| OS-EXT-SRV-ATTR:hypervisor_hostname  | compute2                                                                                                 |
-| OS-EXT-SRV-ATTR:instance_name        | instance-00000003                                                                                        |
-```
-
-Như vậy máy ảo nằm trên node compute2 với KVM name là `instance-00000003`
-
-Kiểm tra trên máy compute2 để tìm file socket kết nối tới máy ảo
-
-`bash -c  "ls /var/lib/libvirt/qemu/*.sock"`
-
-Kết quả:
-
-`/var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-00000003.sock`
-
-instance-00000003: tên của máy ảo trên KVM
-
-`file /var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-00000003.sock`
-
-Kết quả:
-
-`/var/lib/libvirt/qemu/org.qemu.guest_agent.0.instance-00000003.sock: socket`
-
-Kiểm tra kết nối tới máy ảo
-
-`virsh qemu-agent-command instance-00000003 '{"execute":"guest-ping"}'`
-
-Kết quả:
-
-`{"return":{}}`
-
-Sinh password mới `Password_new#@!`
-
-`echo -n "Password_new#@!" | base64`
-
-Kết quả:
-
-`dGhhb2RlcHRyYWk=`
-
-Chèn password mới vào máy ảo, lưu ý máy ảo phải đang bật
-
-`virsh  qemu-agent-command instance-00000003 '{ "execute": "guest-set-user-password","arguments": { "crypted": false,"username": "root","password": "dGhhb2RlcHRyYWk=" } }'`
-
-Kết quả:
-
-`{"return":{}}`
-
-Thử đăng nhập vào máy ảo với password mới là `Password_new#@!`
-
-
-# Sử dụng Qemu để đóng image 
-
-``` sh
-qemu-img convert -c /tmp/centos62.img -O qcow2 CentOS6-Blank-2018.img
-```
-
-# Console 
-
-```sh 
-serial --unit=1 --speed=19200 --word=8 --parity=no --stop=1
-console=tty0 console=ttyS1,19200n8
-```
