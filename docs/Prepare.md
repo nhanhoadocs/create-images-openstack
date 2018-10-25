@@ -17,6 +17,22 @@ vim-cmd vmsvc/getallvms | grep -i <name>
 vim-cmd vmsvc/reload <id>
 ```
 
+## Thực hiện trên PC
+
+Sử dụng `Xming Server` cài đặt trên Windows để thao tác với `virt-manager` qua X11 khi SSH vào Server KVM.
+
+Download Xming : [https://sourceforge.net/projects/xming/](https://sourceforge.net/projects/xming/)
+
+Sau khi download tiến hành cài đặt Xming-Server và start Xming
+
+![](../images/kvm/xming_start.png)
+
+Sau khi login SSH, cấu hình X11 sử dụng Xming Server (Ở đây sử dụng Xshell5)
+
+![](../images/centos/centos6_1.png)
+
+![](https://i.imgur.com/1uoB8Sa.png)
+
 ## Thực hiện trên KVM host
 Start KVM host lên và cấu hình
 
@@ -85,19 +101,7 @@ Restart SSH
 systemctl restart sshd
 ```
 
-Sử dụng `Xming Server` cài đặt trên Windows Client để thao tác với `virt-manager` qua X11 khi SSH vào Server KVM.
-
-Download Xming : [https://sourceforge.net/projects/xming/](https://sourceforge.net/projects/xming/)
-
-Tiến hành cài đặt Xming-Server bình thường trên PC 
-
-Sau khi login SSH, cấu hình X11 sử dụng Xming Server (Ở đây sử dụng Xshell5)
-
-![](../images/centos/centos6_1.png)
-
-![](https://i.imgur.com/1uoB8Sa.png)
-
-Tạo folder channel cho các target của VM (Chỉ thực hiện 1 lần duy nhất)
+Tạo folder channel cho các target của VM 
 ```
 mkdir -p /var/lib/libvirt/qemu/channel/target
 chown -R qemu:kvm /var/lib/libvirt/qemu/channel
@@ -112,7 +116,6 @@ Cài libguestfs-tools để xử lý file `.qcow2` thành file `.img` sau khi c�
 ```
 yum install libguestfs-tools -y
 ```
-
 
 Copy images
 ```sh

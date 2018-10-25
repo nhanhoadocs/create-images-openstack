@@ -255,6 +255,14 @@ yum -y install wget vim
 
 ![](../images/centos/snap_05.png)
 
+### Cài đặt app (nếu có) 
+
+- [DA](install_DA.md)
+- [Plesk](install_Plesk)
+- [WHM](install_WHM)
+
+==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
 ## Bước 4: Cài đặt cấu hình các thành phần dể đóng image trên VM 
 
 - Start lại và ssh vào VM 
@@ -367,16 +375,9 @@ poweroff
 # Xóa bỏ MAC address details
 virt-sysprep -d centos6
 
-# Undefine the libvirt domain (Ở bước này nếu có thao tác snapshot trên KVM có thể bỏ qua)
-virsh undefine centos6
-
 # Giảm kích thước image
 virt-sparsify --compress /var/lib/libvirt/images/centos6.qcow2 CentOS6-64bit-2018.img
 ```
-
-> **Lưu ý:**
-> 
-> Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
 ## Bước 6: Upload image lên glance
 

@@ -10,35 +10,19 @@ CentOS6
 
 [- Đóng Images CentOS6](docs/CentOS6.md)
 
-[- Đóng Images CentOS6 DirectAdmin](docs/CentOS6_DA.md)
-
-[- Đóng Images CentOS6 WHM](docs/CentOS6_WHM.md)
-
-[- Đóng Images CentOS6 Plesk](docs/CentOS6_Plesk.md)
-
 CentOS7
 
 [- Đóng Images CentOS7](docs/CentOS7.md)
-
-[- Đóng Images CentOS7 DirectAdmin](docs/CentOS7_DA.md)
-
-[- Đóng Images CentOS7 WHM](docs/CentOS7_WHM.md)
-
-[- Đóng Images CentOS7 Plesk](docs/CentOS7_Plesk.md)
 
 Ubuntu
 
 [- Đóng Images Ubuntu1404](docs/Ubuntu1404.md)
 
-[- Đóng Images Ubuntu1404 DirectAdmin](docs/Ubuntu1404_DA.md)
-
 [- Đóng Images Ubuntu1604](docs/Ubuntu1604.md)
-
-[- Đóng Images Ubuntu1604 DirectAdmin](docs/Ubuntu1604_DA.md)
 
 [- Đóng Images Ubuntu1804](docs/Ubuntu1804.md)
 
-[- Đóng Images Ubuntu1804 DirectAdmin](docs/Ubuntu1804_DA.md)
+
 
 ## Windows
 
