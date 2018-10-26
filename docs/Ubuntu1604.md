@@ -1,4 +1,4 @@
-# Hướng dẫn đóng image Ubuntu 14.04 với cloud-init và QEMU Guest Agent (không dùng LVM)
+# Hướng dẫn đóng image Ubuntu 16.04 với cloud-init và QEMU Guest Agent (không dùng LVM)
 
 ## Chú ý:
 
@@ -10,38 +10,9 @@
 
 ----------------------
 
-## Bước 1: Tạo máy ảo bằng kvm
+## Bước 1: Tạo máy ảo bằng virt-manager
 
-Bạn có thể dử dụng virt-manager hoặc virt-install để tạo máy ảo
-
-Ở đây mình sử dụng virt-install
-
-``` sh
-qemu-img create -f qcow2 /tmp/ubuntu16.qcow2 10G
-
-virt-install --virt-type kvm --name ubuntu16 --ram 1024 \
-  --cdrom=/var/lib/libvirt/images/ubuntu-14.04.4-server-amd64.iso \
-  --disk /tmp/ubuntu16.qcow2,format=qcow2 \
-  --network bridge=br0 \
-  --graphics vnc,listen=0.0.0.0 --noautoconsole \
-  --os-type=linux --os-variant=ubuntu16.04
-```
-
-**Một số lưu ý trong quá trình cài đặt**
-
-- Đối với hostname, các bạn có thể đặt mặc định bởi ta dùng cloud-init để set sau.
-- Đối với cấu hình partion, để standard cloud-init với 1 phân vùng root (/) để máy ảo có thể tự resize theo flavor mới.
-
-<img src="http://i.imgur.com/hI7aW14.png">
-
-- Đối với phần `software selection`, ta lựa chọn `OpenSSH server`
-
-<img src="http://i.imgur.com/oLB72zc.png">
-
-- Install GRUB boot loader
-
-- Sau khi cài đặt xong, chọn `Continue` để reboot máy ảo.
-Lưu ý: Có một số trường hợp đối với ubuntu16.04, máy ảo sẽ không reboot kể cả khi nó báo là sẽ reboot
+Các bước tạo tương tự Ubuntu12
 
 ## Bước 2 : Tắt máy ảo, xử lí trên KVM host
 
@@ -61,6 +32,9 @@ với `ubuntu16` là tên máy ảo
 </devices>
 ...
 ```
+> Nếu đã tồn tại `channel` đổi port channel này về `port='2'` và add channel bình thường
+
+![](../images/ubuntu12/u12_install_54.png)
 
 
 ## Bước 3: Cài các dịch vụ cần thiết
@@ -84,6 +58,12 @@ Retype new UNIX password: <root_passwd>
 Restart sshd
 ```sh
 service ssh restart
+```
+
+Disable firewalld 
+```sh
+sudo apt-get install ufw -y
+sudo ufw disable
 ```
 
 Logout và login lại bằng user `root` và xóa user `ubuntu`
@@ -118,6 +98,15 @@ sudo apt-get dist-upgrade
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
+- Shutdown VM 
+
+![](../images/kvm/shutdown.png)
+
+- Tiến hành truy cập tab `Snapshot` để snapshot
+
+![](../images/kvm/snap.png)
+
+
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
 
 ```sh
@@ -130,8 +119,8 @@ apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
 dpkg-reconfigure cloud-init
 ```
 
-Sau khi màn hình mở ra, lựa chọn `EC2` và `OpenStack`
-```
+Sau khi màn hình mở ra, lựa chọn `EC2`
+```sh
 # Disable Warning đối với EC2 trên Ubuntu 16
 mkdir -p /var/lib/cloud/instance/warnings/
 touch /var/lib/cloud/instance/warnings/.skip
@@ -142,41 +131,46 @@ touch /var/lib/cloud/instance/warnings/.skip
 Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys khi truyền vào, mặc định là `root`
 
 ``` sh
-sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
 ## Bước 6: Xóa bỏ thông tin của địa chỉ MAC
 
-Xóa nội dung file `/lib/udev/rules.d/75-persistent-net-generator.rules` và `/etc/udev/rules.d/70-persistent-net.rules` (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
+Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
+```sh 
+echo '#' > /lib/udev/rules.d/75-persistent-net-generator.rules
+echo '#' > /etc/udev/rules.d/70-persistent-net.rules
+```
 
 Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
 
 ## Bước 7: Cấu hình để instance báo log ra console
 
-Thay đổi `GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"` trong file `/etc/default/grub`.
+```sh
+sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=""|GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"|g' /etc/default/grub
+# Lưu lại config
+update-grub
+```
 
 Sau đó nhập lệnh `update-grub` để lưu lại.
 
+
 ## Bước 8: Cài đặt netplug
 
-- Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
+- Cài đặt netplug để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
 
 ``` sh
 apt-get install netplug -y
-wget https://raw.githubusercontent.com/longsube/Netplug-config/master/netplug
-```
-
-- Đưa file netplug vào thư mục /etc/netplug
-
-``` sh
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_ubuntu -O netplug
 mv netplug /etc/netplug/netplug
 chmod +x /etc/netplug/netplug
 ```
 
 ## Bước 9: Disable default config route
 
-Comment dòng `link-local 169.254.0.0` trong `/etc/networks`
+```sh
+sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
+```
 
 ## Bước 10: Cài đặt qemu-guest-agent
 
@@ -194,19 +188,17 @@ apt-get install qemu-guest-agent -y
 
 Kiểm tra phiên bản qemu-ga bằng lệnh:
 
-`qemu-ga --version`
+```sh 
+qemu-ga --version
+service qemu-guest-agent status
+```
 
 Kết quả:
 
-`QEMU Guest Agent 2.5.0`
-
-Kiểm tra dịch vụ
-
-`service qemu-guest-agent status`
-
-Kết quả:
-
-`* qemu-ga is running`
+```sh 
+QEMU Guest Agent 2.5.0
+* qemu-ga is running
+```
 
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 
@@ -228,16 +220,11 @@ init 0
 ## Bước 13: Clean up image
 
 ```sh
-virt-sysprep -d ubuntu16.04
+virt-sysprep -d ubuntu16
 ```
 
-## Bước 14: Undefine libvirt domain
 
-```sh
-virsh undefine ubuntu16.04
-```
-
-## Bước 15: Giảm kích thước máy ảo
+## Bước 14: Giảm kích thước máy ảo
 
 ```sh
 virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img
@@ -247,9 +234,9 @@ virt-sparsify --compress /tmp/ubuntu16.qcow2 /root/ubuntu16.img
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 16: Upload image lên glance
+## Bước 15: Upload image lên glance
 
-- Di chuyển image tới máy CTL, sử dụng câu lệnh sau
+- Copy image tới máy CTL, sử dụng câu lệnh sau
 
 ``` sh
 glance image-create --name ubuntu16-64bit-2018 \
