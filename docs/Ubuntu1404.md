@@ -214,13 +214,7 @@ init 0
 virt-sysprep -d ubuntu14.04
 ```
 
-## Bước 14: Undefine libvirt domain
-
-```
-virsh undefine ubuntu14.04
-```
-
-## Bước 15: Giảm kích thước máy ảo
+## Bước 14: Giảm kích thước máy ảo
 
 ```sh
 virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img
@@ -230,7 +224,7 @@ virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 16: Upload image lên glance
+## Bước 15: Upload image lên glance
 
 - Copy image tới máy CTL, sử dụng câu lệnh sau
 
