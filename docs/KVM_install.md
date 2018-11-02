@@ -81,6 +81,8 @@ nmcli c modify br0 ipv4.dns 8.8.8.8
 nmcli c delete ens160
 # Gán card mạng hiện tại vào bridge br0
 nmcli c add type bridge-slave autoconnect yes con-name ens160 ifname ens160 master br0
+# Restart network 
+/etc/init.d/network restart
 ```
 
 Disable ipv6
