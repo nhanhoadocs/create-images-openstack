@@ -63,6 +63,13 @@ cd /usr/local/directadmin/scripts
 ./ipswap.sh 192.168.122.36 <ip-public-server>
 ```
 
+- Chạy script get License
+```sh 
+cd /usr/local/directadmin/scripts
+./getLicense.sh
+service directadmin restart || systemctl restart directadmin
+```
+
 - Reboot
 ```sh 
 init 6 
