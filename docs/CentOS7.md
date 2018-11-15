@@ -301,6 +301,27 @@ echo "NOZEROCONF=yes" >> /etc/sysconfig/network
 rm -f /etc/sysconfig/network-scripts/ifcfg-eth0
 ```
 
+- Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào, chỉnh sửa file `/etc/rc.local` như sau:
+
+```sh 
+#!/bin/bash
+for iface in $(ip -o link | cut -d: -f2 | tr -d ' ' | grep ^eth)
+do
+   test -f /etc/sysconfig/network-scripts/ifcfg-$iface
+   if [ $? -ne 0 ]
+   then
+       touch /etc/sysconfig/network-scripts/ifcfg-$iface
+       echo -e "DEVICE=$iface\nBOOTPROTO=dhcp\nONBOOT=yes" > /etc/sysconfig/network-scripts/ifcfg-$iface
+       ifup $iface
+   fi
+done
+```
+
+- Thêm quyền thực thi cho file `/etc/rc.local`
+```sh
+chmod +x /etc/rc.local 
+```
+
 - Xóa file hostname
 
 ``` sh

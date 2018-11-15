@@ -6,13 +6,42 @@ Môi trường chuẩn bị:
 - Disk: 200G 
 - CPU: 4x2 Core
 
-## Thực hiện trên ESXi 
-Sau khi cài đặt xong CentOS 7 tiến hành shutoff và cấu hình enable `vmx` cho KVM Node trên ESXi Node
-```
-# Shutdown VM --> SSH to ESXi --> go to folder --> edit VM-name.vmx --> Add line
-vhv.enable = "TRUE"
+## Cài đặt OS 
 
-# Save and close the file
+Tiến hành cài đặt CentOS7 bình thường cho VM
+
+Sau khi cài đặt OS xong Tiến hành shutoff VM đi 
+```sh 
+init 0
+```
+
+## Thực hiện trên ESXi host nhằm enable vmx
+
+Lưu ý: Nếu KVM đóng Images cài trên Server vật lý thì không cần xử lý bước này. 
+
+- Enable SSH trên ESXi
+
+![](../images/kvm/enable_ssh_01.png)
+
+- Chọn SSH và Start SSH 
+
+![](../images/kvm/enable_ssh_02.png)
+
+![](../images/kvm/enable_ssh_03.png)
+
+- SSH vào node ESXi truy cập vào folder của VM_KVM 
+``sh 
+cd /vmfs/volumes/datastore1/Canh.KVM
+```
+> Tùy đường dẫn của VM_KVM bạn lưu ở đâu ở đây VD là Canh.KVM lưu trữ trong datastore1
+
+- Chỉnh sửa file .vmx thêm vào cuối 
+```sh 
+vhv.enable = "TRUE"
+```
+
+- Kiểm tra ID của VM_KVM và reload để nhận config mới
+```sh 
 vim-cmd vmsvc/getallvms | grep -i <name> 
 vim-cmd vmsvc/reload <id>
 ```
