@@ -17,7 +17,7 @@ init 0
 
 ## Thực hiện trên ESXi host nhằm enable vmx
 
-Lưu ý: Nếu KVM đóng Images cài trên Server vật lý thì không cần xử lý bước này. 
+> Lưu ý: Nếu KVM đóng Images cài trên Server vật lý thì không cần xử lý bước này. 
 
 - Enable SSH trên ESXi
 
@@ -30,7 +30,7 @@ Lưu ý: Nếu KVM đóng Images cài trên Server vật lý thì không cần x
 ![](../images/kvm/enable_ssh_03.png)
 
 - SSH vào node ESXi truy cập vào folder của VM_KVM 
-``sh 
+```sh 
 cd /vmfs/volumes/datastore1/Canh.KVM
 ```
 > Tùy đường dẫn của VM_KVM bạn lưu ở đâu ở đây VD là Canh.KVM lưu trữ trong datastore1
