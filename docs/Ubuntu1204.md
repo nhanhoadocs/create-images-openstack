@@ -240,8 +240,8 @@ sed -i 's|disable_root: 1|disable_root: 0|g' /etc/cloud/cloud.cfg
 
 Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
 ```sh 
-echo '#' > /lib/udev/rules.d/75-persistent-net-generator.rules
-echo '#' > /etc/udev/rules.d/70-persistent-net.rules
+echo > /lib/udev/rules.d/75-persistent-net-generator.rules
+echo > /etc/udev/rules.d/70-persistent-net.rules
 ```
 
 Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
@@ -252,7 +252,10 @@ Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: khôn
 sed -i 's|GRUB_HIDDEN_TIMEOUT_QUIET=true|#GRUB_HIDDEN_TIMEOUT_QUIET=true|g' /etc/default/grub
 sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=""|GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0"|g' /etc/default/grub
 sed -i 's|GRUB_TERMINAL=console|GRUB_TERMINAL=console|g' /etc/default/grub
-# Lưu lại config
+```
+
+Lưu lại config 
+```sh 
 update-grub
 ```
 
@@ -305,7 +308,7 @@ virt-sysprep -d ubuntu12
 ## Bước 14: Giảm kích thước máy ảo
 
 ```sh
-virt-sparsify --compress /tmp/ubuntu12.qcow2 /root/ubuntu12.img
+virt-sparsify --compress /var/lib/libvirt/images/ubuntu12.qcow2 /root/ubuntu12.img
 ```
 
 **Lưu ý:**
