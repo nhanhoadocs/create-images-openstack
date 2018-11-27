@@ -5,6 +5,8 @@
 # Get info mysql_root_passwd and da_admin(mysql_admin_passwd) password
 old_passwd_1=$(cat /usr/local/directadmin/scripts/setup.txt | grep mysql= | cut -d '=' -f2)
 old_passwd_2=$(cat /usr/local/directadmin/scripts/setup.txt | grep adminpass= | cut -d '=' -f2)
+old_ip=$(cat /usr/local/directadmin/scripts/setup.txt | grep ip= | cut -d '=' -f2)
+new_ip=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -n 1)
 
 # Input from cloud-init
 # new_passwd_1=$1
@@ -23,6 +25,9 @@ mysqladmin --user=da_admin --password=$old_passwd_2 password $new_passwd_2
 sed -i "s|mysql=$old_passwd_1|mysql=$new_passwd_1|g" /usr/local/directadmin/scripts/setup.txt
 sed -i "s|adminpass=$old_passwd_2|adminpass=$new_passwd_2|g" /usr/local/directadmin/scripts/setup.txt
 sed -i "s|passwd=$old_passwd_2|passwd=$new_passwd_2|g" /usr/local/directadmin/conf/mysql.conf
+
+# Change IP
+bash /usr/local/directadmin/scripts/ipswap.sh $old_ip $new_ip
 
 # Renew license 
 bash /usr/local/directadmin/scripts/getLicense.sh
