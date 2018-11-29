@@ -33,3 +33,8 @@ bash /usr/local/directadmin/scripts/ipswap.sh $old_ip $new_ip
 # Renew license 
 bash /usr/local/directadmin/scripts/getLicense.sh
 service directadmin restart || systemctl restart directadmin
+
+# DONE 
+echo "DONE"
+echo "MySQL: root/$new_passwd_1 da_admin/$new_passwd_2"
+echo "DirectAdmin: admin/$new_passwd_2"
