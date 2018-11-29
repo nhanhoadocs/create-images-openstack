@@ -25,6 +25,7 @@ mysqladmin --user=da_admin --password=$old_passwd_2 password $new_passwd_2
 sed -i "s|mysql=$old_passwd_1|mysql=$new_passwd_1|g" /usr/local/directadmin/scripts/setup.txt
 sed -i "s|adminpass=$old_passwd_2|adminpass=$new_passwd_2|g" /usr/local/directadmin/scripts/setup.txt
 sed -i "s|passwd=$old_passwd_2|passwd=$new_passwd_2|g" /usr/local/directadmin/conf/mysql.conf
+sed -i "s|password=$old_passwd_2|password=$new_passwd_2|g" /usr/local/directadmin/conf/my.cnf
 
 # Change IP
 bash /usr/local/directadmin/scripts/ipswap.sh $old_ip $new_ip
