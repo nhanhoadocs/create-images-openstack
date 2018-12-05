@@ -196,14 +196,18 @@ QEMU Guest Agent 2.5.0
 
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 
+Chỉnh sửa file `/etc/network/interfaces` cấu hình eth0 nhận dhcp
 ``` sh
-vim /etc/network/interfaces
+cat /etc/network/interfaces
 
 auto lo
 iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
+...
+EOF
 ```
+> Lưu ý: Sub interface khi đóng các app nếu sinh ra
 
 ## Bước 12: Tắt máy ảo
 

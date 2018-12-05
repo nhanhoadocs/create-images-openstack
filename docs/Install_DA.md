@@ -27,6 +27,9 @@ screen -rd DA
 rm -rf setup.sh
 ```
 
+- Truy cập 
+http://<ip-public-server>:2222
+
 4.2 Cấu hình DA đa phiên bản PHP 5.6 và PHP 7.0 Quý làm theo các bước sau:
 
 Bước 1:

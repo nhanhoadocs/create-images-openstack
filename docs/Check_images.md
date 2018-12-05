@@ -138,16 +138,6 @@ Truy cập
 
 # Đổi thông tin IP Plesk sau khi tạo VM từ Template
 
-Đổi thông tin IP Plesk
-
-![](images/Plesk change IP.png)
-
-![](images/Plesk change IP.png)
-
-Đổi thông tin password của MSSQL
-
-
-
 Đổi thông tin password đăng nhập Plesk
 
 ```
@@ -157,5 +147,5 @@ https://docs.plesk.com/en-US/12.5/advanced-administration-guide-win/system-maint
 ```
 
 Truy cập 
-- Plesk: https://<ip-public-server>:2083
+- Plesk: https://<ip-public-server>:8443
 

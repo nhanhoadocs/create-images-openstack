@@ -18,3 +18,6 @@ screen -rd Plesk
 rm -rf latest installer.lock
 
 ```
+
+Truy cập 
+- Plesk: https://<ip-public-server>:8443
