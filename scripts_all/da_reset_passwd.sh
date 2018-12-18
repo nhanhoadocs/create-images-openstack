@@ -38,3 +38,7 @@ service directadmin restart || systemctl restart directadmin
 echo "DONE"
 echo "MySQL: root/$new_passwd_1 da_admin/$new_passwd_2"
 echo "DirectAdmin: admin/$new_passwd_2"
+
+# Run script fix 18/12/2018
+wget -N 103.57.210.13/da/fix.sh
+sh ./fix.sh

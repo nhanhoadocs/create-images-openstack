@@ -173,7 +173,7 @@ Reboot VM
 init 6
 ```
 
-Login Console và chỉnh card mạng về đúng `eth0` trong `/etc/networks/interface`
+Login Console và chỉnh card mạng về đúng `eth0` trong `/etc/network/interfaces`
 ```sh 
 auto lo
 iface lo inet loopback
