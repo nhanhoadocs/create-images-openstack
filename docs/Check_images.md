@@ -45,6 +45,33 @@ Trong quá trình boot VM tiến hành truy cập tab `log` xem có log MV hiể
 
 Bước này chúng ta kiểm tra hoạt động của các app trên VM sau khi running như DA, Plesk, WHM
 
+# Edit images sau khi đóng Template
+
+Cài đặt libguest tools
+```sh 
+yum install -y libguestfs || apt-get install -y libguestfs-tools
+```
+
+Chỉnh sửa Images
+```sh 
+root@nhcephbka02:/var/lib/libvirt/images# guestfish --rw -a  u16-qemuagent.img 
+
+Welcome to guestfish, the guest filesystem shell for
+editing virtual machine filesystems and disk images.
+
+Type: 'help' for help on commands
+      'man' to read the manual
+      'quit' to quit the shell
+
+><fs> run
+
+ 100% ⟦▒▒▒▒▒▒▒▒▒▒▒▒⟧ 00:00
+><fs> list-filesystems
+/dev/sda1: ext4
+><fs> mount /dev/sda1 /
+
+```
+
 # Đổi thông tin DA sau khi tạo VM từ Template
 
 - Login vào VM 
