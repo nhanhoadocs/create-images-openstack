@@ -107,6 +107,12 @@ sudo apt-get dist-upgrade
 
 ![](../images/kvm/snap.png)
 
+## Bước bổ sung: Thao tác cài đặt các APP cần thiết cho việc đóng APP
+
+- Cài đặt DA 
+- Cài đặt Plesk
+- Cài đặt WHM
+
 ## Bước 4: Cấu hình để instance nhận metadata từ datasource
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
@@ -126,6 +132,12 @@ Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys
 
 ``` sh
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
+```
+
+## Bước 5 Bổ sung
+Xử lý phần wait 120s khi boot trên Ubuntu14
+``` sh
+sed -i 's/dowait 120/dowait 3/g' /etc/init/cloud-init-nonet.conf
 ```
 
 ## Bước 6: Xóa bỏ thông tin của địa chỉ MAC
@@ -196,7 +208,7 @@ QEMU Guest Agent 2.5.0
 
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 
-Chỉnh sửa file `/etc/network/interfaces` cấu hình eth0 nhận dhcp
+Kiểm tra file `/etc/network/interfaces` chắc chắn cấu hình của `eth0` là `dhcp`
 ``` sh
 cat /etc/network/interfaces
 
@@ -207,7 +219,7 @@ iface eth0 inet dhcp
 ...
 EOF
 ```
-> Lưu ý: Sub interface khi đóng các app nếu sinh ra
+> Lưu ý: Sub interface eth0:1 được tạo ra khi đóng các app (DirectAdmin) thì để nguyên ko chỉnh sửa 
 
 ## Bước 12: Tắt máy ảo
 
