@@ -279,25 +279,28 @@ Tiến hành SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi 
 
 ![](../images/kvm/snap.png)
 
-### ==> Start lại máy ảo SSH vào 
+### Cài đặt các phần mềm bổ sung 
 
+Start lại VM login bằng user root
 
 Cài đặt các Sofware phần mềm cần thiết (Nếu có )
 - Plesk, DA, ...
 - Gitlab, Owncloud
 
+
 ==> Sau khi cài đặt xong tiến hành shutdown và snapshot lại bản cài đặt 
 
+### Login vào VM bằng User ROOT
 
 ### 2.2.Để máy ảo khi boot sẽ tự giãn phân vùng theo dung lượng mới, ta cài các gói sau:
 ```
-apt-get install cloud-utils cloud-initramfs-growroot -y
+sudo apt-get install cloud-utils cloud-initramfs-growroot -y
 ```
 
 ### 2.3. Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
 
 ```sh
-apt-get install netplug -y
+sudo apt-get install netplug -y
 wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_ubuntu -O netplug
 mv netplug /etc/netplug/netplug
 chmod +x /etc/netplug/netplug
@@ -360,44 +363,35 @@ dpkg-reconfigure cloud-init
 ```sh
 cloud-init clean
 systemctl restart cloud-init
-```
-
-
- - Shutdown máy
-```sh
-init 0
-```
-
-### 2.9 Kiểm tra
- - Restart máy ảo và kiểm tra service cloud-init
-
-```
+systemctl enable cloud-init
 systemctl status cloud-init
 ```
 
- - Start service cloud-init và tắt máy
+ - Clear toàn bộ history 
+```sh 
+apt-get clean all
+rm -f /var/log/wtmp /var/log/btmp
+history -c
+```
+
+ - Shutoff máy
 ```sh
-systemctl start cloud-init
 init 0
 ```
 
 ## 3. Thực hiện trên Host KVM
-### 3.1. Cài đặt bộ libguestfs-tools để xử lý image (nên cài đặt trên Ubuntu OS để có bản libguestfs mới nhất)
+
+### 3.1. Xử dụng lệnh `virt-sysprep` để xóa toàn bộ các thông tin máy ảo:
 ```
-apt-get install libguestfs-tools -y
+virt-sysprep -d canhdx-owncloud2
 ```
 
-### 3.2. Xử dụng lệnh `virt-sysprep` để xóa toàn bộ các thông tin máy ảo:
-```
-virt-sysprep -d u18.qcow2
-```
-
-### 3.3. Dùng lệnh sau để tối ưu kích thước image:
+### 3.2. Dùng lệnh sau để tối ưu kích thước image:
 ```sh
-virt-sparsify --compress --convert qcow2 /var/lib/libvirt/images/u18-02.qcow2 /var/lib/libvirt/images/u18-02.img```
+virt-sparsify --compress --convert qcow2 /var/lib/libvirt/images/canhdx-owncloud2.qcow2 U18-OwnCloud
 ```
 
 ### 3.4. Upload image lên glance và sử dụng
 ```
-glance image-create --name ubuntu18.04_v1 --disk-format qcow2 --container-format bare --file /root/images/u18-02.img --visibility=public --property hw_qemu_guest_agent=yes --progress
+glance image-create --name U18-OwnCloud --disk-format qcow2 --container-format bare --file U18-OwnCloud --visibility=public --property hw_qemu_guest_agent=yes --progress
 ```
