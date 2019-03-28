@@ -20,7 +20,7 @@
 qemu-img create -f qcow2 /var/lib/libvirt/images/u18.qcow2  10G
 ```
 
- - Tạo máy ảo với tool *Virt-Manager*. Import file disk máy ảo. 
+ - Tạo máy ảo với tool `Virt-Manager`. Import file disk máy ảo. 
  
 ![u18](../images/ubuntu18/u18-00.png) 
 
@@ -125,11 +125,15 @@ qemu-img create -f qcow2 /var/lib/libvirt/images/u18.qcow2  10G
 ![u18](../images/ubuntu18/u18-26.png) 
 
 
-### 1.2. Chỉnh sửa file .xml của máy ảo, bổ sung thêm channel trong `<devices>` (để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent), sau đó save lại
-`virsh edit u18-01`
+## Bước 2 : Tắt máy ảo, xử lí trên KVM host
 
-với `u18-01` là tên máy ảo
-```
+- Chỉnh sửa file `.xml` của máy ảo, bổ sung thêm channel trong <devices> (để máy host giao tiếp với máy ảo sử dụng qemu-guest-agent), sau đó save lại
+
+`virsh edit ubuntu16`
+
+với `ubuntu16` là tên máy ảo
+
+``` sh
 ...
 <devices>
  <channel type='unix'>
@@ -137,130 +141,107 @@ với `u18-01` là tên máy ảo
       <address type='virtio-serial' controller='0' bus='0' port='1'/>
  </channel>
 </devices>
+...
 ```
+> Nếu đã tồn tại `channel` đổi port channel này về `port='2'` và add channel bình thường
 
-### 1.3. Tạo thêm thư mục cho channel vừa tạo và phân quyền cho thư mục đó
-```
-mkdir -p /var/lib/libvirt/qemu/channel/target
-chown -R libvirt-qemu:kvm /var/lib/libvirt/qemu/channel
-```
+![](../images/ubuntu12/u12_install_54.png)
 
-### 1.4. Dùng `vim` để sửa file `/etc/apparmor.d/abstractions/libvirt-qemu`
-`vim /etc/apparmor.d/abstractions/libvirt-qemu`
 
-Bổ sung thêm cấu hình sau vào dòng cuối cùng
-```
- /var/lib/libvirt/qemu/channel/target/*.qemu.guest_agent.0 rw,
-```
-#### *Mục đích là phân quyền cho phép libvirt-qemu được đọc ghi các file có hậu tố `.qemu.guest_agent.0` trong thư mục `/var/lib/libvirt/qemu/channel/target`*
-
-Khởi động lại `libvirt` và `apparmor`
-```
-service libvirt-bin restart
-service apparmor reload
-```
-
-### 1.5. Bật máy ảo
-
-## 2. Thực hiện trên máy ảo
+## 2. Thực hiện trên máy ảo cài đặt các dịch vụ cần thiết 
 
 ### 2.1. Setup môi trường 
 
- - Cấu hình cho phép login root và xóa user ubuntu chỉnh vi /etc/ssh/sshd_config
+Bật máy ảo lên, truy cập vào máy ảo. Lưu ý với lần đầu boot, bạn phải sử dụng tài khoản `ubuntu` tạo trong quá trình cài os, chuyển đổi nó sang tài khoản root để sử dụng.
+
+Cấu hình cho phép login root và xóa user `ubuntu` chỉnh `/etc/ssh/sshd_config`
 ```sh
 sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/'g /etc/ssh/sshd_config
 service sshd restart
 ```
 
- - Chỉnh sửa timezone về Asia/Ho_Chi_Minh
+Đặt passwd cho root
+```sh
+sudo su 
+# Đặt passwd cho root user
+passwd
+Enter new UNIX password: <root_passwd>
+Retype new UNIX password: <root_passwd>
+```
+
+Restart sshd
+```sh
+sudo service ssh restart
+```
+
+Disable firewalld 
+```sh
+sudo apt-get install ufw -y
+sudo ufw disable
+sudo stop disable
+```
+
+Logout hẳn ra khỏi VM 
+```sh 
+logout 
+```
+
+Login lại bằng user `root` và xóa user `ubuntu`
+```sh
+userdel ubuntu
+rm -rf /home/ubuntu
+```
+
+Đổi timezone về `Asia/Ho_Chi_Minh`
 ```sh
 dpkg-reconfigure tzdata
 ```
 
- - Disable ipv6
-```
+Disable ipv6
+```sh
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 
 echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf 
 echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-# Kiểm tra config add thành công 
 sysctl -p
-# Kiểm tra disable ipv6 
 cat /proc/sys/net/ipv6/conf/all/disable_ipv6
-# Output: 1: OK, 0: NotOK
 ```
+> Output: 1: OK, 0: NotOK
 
- - Update
+Update 
 ```sh
-sudo apt-get update -y
-sudo apt-get upgrade -y
+sudo apt-get update -y 
+sudo apt-get upgrade -y 
 sudo apt-get dist-upgrade -y
+sudo apt-get autoremove 
 ```
 
-### 2.2.Để máy ảo khi boot sẽ tự giãn phân vùng theo dung lượng mới, ta cài các gói sau:
-```
-apt-get install cloud-utils cloud-initramfs-growroot -y
+Kiểm tra swap file 
+```sh 
+root@ubuntu:~# cat /proc/swaps
+Filename				Type		Size	Used	Priority
+/swap.img                               file		2023420	0	-2
 ```
 
-### 2.3. Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
-
+Xóa swap 
+```sh 
+swapoff -a
+rm -rf /swap.img
+```
+> Kiểm tra 
 ```sh
-apt-get install netplug -y
-wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_ubuntu -O netplug
-mv netplug /etc/netplug/netplug
-chmod +x /etc/netplug/netplug
+root@ubuntu:~# free -m 
+              total        used        free      shared  buff/cache   available
+Mem:           1993         127         699           1        1166        1691
+Swap:             0           0           0
 ```
 
-### 2.3. Cấu hình user default
-
-```sh
-sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
-```
-
-### 2.4. Xóa bỏ thông tin của địa chỉ MAC
-```sh
-echo > /lib/udev/rules.d/75-persistent-net-generator.rules
-echo > /etc/udev/rules.d/70-persistent-net.rules
-```
-
-### 2.5. Cấu hình để instance báo log ra console và đổi name Card mạng về eth* thay vì ens, eno
+Cấu hình để instance báo log ra console và đổi name Card mạng về eth* thay vì ens, eno
 ```sh
 sed -i 's|GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 console=tty1 console=ttyS0"|g' /etc/default/grub
 update-grub
 ```
 
-### 2.6. Disable default config route
-
- - Comment dòng `link-local 169.254.0.0` trong `/etc/networks`
-```sh
-sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
-```
-
-### 2.7. Cài đặt `qemu-guest-agent`
-
-Chú ý: qemu-guest-agent là một daemon chạy trong máy ảo, giúp quản lý và hỗ trợ máy ảo khi cần (có thể cân nhắc việc cài thành phần này lên máy ảo)
-
-Để có thể thay đổi password máy ảo thì phiên bản qemu-guest-agent phải >= 2.5.0
-
-```
-apt-get install software-properties-common -y
-add-apt-repository cloud-archive:rocky -y
-apt-get update -y
-apt-get install qemu-guest-agent -y
-```
-
-#### Kiểm tra phiên bản `qemu-ga` bằng lệnh:
-```
-qemu-ga --version
-service qemu-guest-agent status
-```
-
-Kết quả:
-```
-QEMU Guest Agent 2.11.0
-* qemu-ga is running
-```
-
-### 2.8. Cấu hình network sử dụng ifupdown thay vì netplan
+Cấu hình network sử dụng ifupdown thay vì netplan
 
  - Cài đặt service ifupdown 
 ```sh
@@ -286,14 +267,94 @@ iface eth0 inet dhcp
 EOF
 ```
 
-### 2.9. Cấu hình datasource 
+Reboot lại Server kiểm tra `eth0`, network
+
+Tiến hành SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+
+- Shutdown VM 
+
+![](../images/kvm/shutdown.png)
+
+- Tiến hành truy cập tab `Snapshot` để snapshot
+
+![](../images/kvm/snap.png)
+
+### ==> Start lại máy ảo SSH vào 
+
+
+Cài đặt các Sofware phần mềm cần thiết (Nếu có )
+- Plesk, DA, ...
+- Gitlab, Owncloud
+
+==> Sau khi cài đặt xong tiến hành shutdown và snapshot lại bản cài đặt 
+
+
+### 2.2.Để máy ảo khi boot sẽ tự giãn phân vùng theo dung lượng mới, ta cài các gói sau:
+```
+apt-get install cloud-utils cloud-initramfs-growroot -y
+```
+
+### 2.3. Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
+
+```sh
+apt-get install netplug -y
+wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_ubuntu -O netplug
+mv netplug /etc/netplug/netplug
+chmod +x /etc/netplug/netplug
+```
+
+### 2.4. Cấu hình user default
+
+```sh
+sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
+```
+
+### 2.5. Xóa bỏ thông tin của địa chỉ MAC
+```sh
+echo > /lib/udev/rules.d/75-persistent-net-generator.rules
+echo > /etc/udev/rules.d/70-persistent-net.rules
+```
+
+### 2.6. Disable default config route
+
+ - Comment dòng `link-local 169.254.0.0` trong `/etc/networks`
+```sh
+sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
+```
+
+### 2.7. Cài đặt `qemu-guest-agent`
+
+Chú ý: qemu-guest-agent là một daemon chạy trong máy ảo, giúp quản lý và hỗ trợ máy ảo khi cần (có thể cân nhắc việc cài thành phần này lên máy ảo)
+
+Để có thể thay đổi password máy ảo thì phiên bản qemu-guest-agent phải >= 2.5.0
+
+```
+apt-get install software-properties-common -y
+add-apt-repository cloud-archive:rocky -y
+apt-get update -y
+apt-get install qemu-guest-agent -y
+```
+
+> Kiểm tra phiên bản `qemu-ga` bằng lệnh:
+```
+qemu-ga --version
+service qemu-guest-agent status
+```
+
+Kết quả:
+```
+QEMU Guest Agent 2.11.0
+* qemu-ga is running
+```
+
+### 2.8. Cấu hình datasource 
 
  - Bỏ chọn mục `NoCloud` bằng cách dùng dấu `SPACE`, sau đó ấn `ENTER`
 ```sh
 dpkg-reconfigure cloud-init
 ```
 
-![u18](/ghichep/ManhDV/images/u18-27.png) 
+![u18](../images/ubuntu18/u18-27.png) 
 
  - Clean cấu hình và restart service :
 ```sh
@@ -307,7 +368,7 @@ systemctl restart cloud-init
 init 0
 ```
 
-### 2.10 Kiểm tra
+### 2.9 Kiểm tra
  - Restart máy ảo và kiểm tra service cloud-init
 
 ```
