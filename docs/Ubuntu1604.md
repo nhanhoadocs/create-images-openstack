@@ -4,7 +4,7 @@
 
 - Hướng dẫn này dành cho các image không sử dụng LVM
 - Sử dụng công cụ virt-manager hoặc web-virt để kết nối tới console máy ảo
-- OS cài đặt KVM là Ubuntu 14.04
+- OS cài đặt KVM là Ubuntu 16.04
 - Phiên bản OpenStack sử dụng là Queens
 - Hướng dẫn bao gồm 2 phần chính: thực hiện trên máy ảo cài OS và thực hiện trên KVM Host
 
