@@ -371,6 +371,7 @@ systemctl restart cloud-init
 systemctl enable cloud-init
 systemctl status cloud-init
 ```
+> Thao tác `restart cloud-init` có thể tốn 2-3p để rebuild lại các config của Cloud-init
 
  - Clear toàn bộ history 
 ```sh 
