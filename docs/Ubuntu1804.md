@@ -227,6 +227,11 @@ Xóa swap
 swapoff -a
 rm -rf /swap.img
 ```
+
+Xóa cấu hình swap file trong file `/etc/fstab`
+```sh 
+sed -Ei '/swap.img/d' /etc/fstab
+```
 > Kiểm tra 
 ```sh
 root@ubuntu:~# free -m 
