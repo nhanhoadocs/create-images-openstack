@@ -206,6 +206,7 @@ sysctl -p
 
 - Update file `dhclient-script`
 ```sh
+yum install wget -y
 rm -rf /usr/sbin/dhclient-script
 wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/dhclient-script -O /usr/sbin/dhclient-script
 chmod +x /usr/sbin/dhclient-script
