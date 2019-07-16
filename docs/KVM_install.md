@@ -6,13 +6,42 @@ Môi trường chuẩn bị:
 - Disk: 200G 
 - CPU: 4x2 Core
 
-## Thực hiện trên ESXi 
-Sau khi cài đặt xong CentOS 7 tiến hành shutoff và cấu hình enable `vmx` cho KVM Node trên ESXi Node
-```
-# Shutdown VM --> SSH to ESXi --> go to folder --> edit VM-name.vmx --> Add line
-vhv.enable = "TRUE"
+## Cài đặt OS 
 
-# Save and close the file
+Tiến hành cài đặt CentOS7 bình thường cho VM
+
+Sau khi cài đặt OS xong Tiến hành shutoff VM đi 
+```sh 
+init 0
+```
+
+## Thực hiện trên ESXi host nhằm enable vmx
+
+> Lưu ý: Nếu KVM đóng Images cài trên Server vật lý thì không cần xử lý bước này. 
+
+- Enable SSH trên ESXi
+
+![](../images/kvm/enable_ssh_01.png)
+
+- Chọn SSH và Start SSH 
+
+![](../images/kvm/enable_ssh_02.png)
+
+![](../images/kvm/enable_ssh_03.png)
+
+- SSH vào node ESXi truy cập vào folder của VM_KVM 
+```sh 
+cd /vmfs/volumes/datastore1/Canh.KVM
+```
+> Tùy đường dẫn của VM_KVM bạn lưu ở đâu ở đây VD là Canh.KVM lưu trữ trong datastore1
+
+- Chỉnh sửa file .vmx thêm vào cuối 
+```sh 
+vhv.enable = "TRUE"
+```
+
+- Kiểm tra ID của VM_KVM và reload để nhận config mới
+```sh 
 vim-cmd vmsvc/getallvms | grep -i <name> 
 vim-cmd vmsvc/reload <id>
 ```
@@ -57,7 +86,7 @@ Cài đặt KVM Node để đóng Images
 ```
 grep -E '(vmx|svm)' /proc/cpuinfo
 # WARNING! The remote SSH server rejected X11 forwarding request.
-yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer bridge-utils  "@X Window System"xorg-x11-xauth xorg-x11-fonts-* xorg-x11-utils mesa-libGLU*.i686 mesa-libGLU*.x86_64
+yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer bridge-utils  "@X Window System" xorg-x11-xauth xorg-x11-fonts-* xorg-x11-utils mesa-libGLU*.i686 mesa-libGLU*.x86_64
 touch /root/.Xauthority
 systemctl start libvirtd
 systemctl enable libvirtd
@@ -81,6 +110,8 @@ nmcli c modify br0 ipv4.dns 8.8.8.8
 nmcli c delete ens160
 # Gán card mạng hiện tại vào bridge br0
 nmcli c add type bridge-slave autoconnect yes con-name ens160 ifname ens160 master br0
+# Restart network 
+/etc/init.d/network restart
 ```
 
 Disable ipv6

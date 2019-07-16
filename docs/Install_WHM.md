@@ -20,3 +20,9 @@ screen -rd WHM
 # Sau khi cài đặt xong xóa file cài đặt
 rm -rf latest
 ```
+
+
+Truy cập 
+- WHM: https://<ip-public-server>:2083
+- Cpanel: https://<ip-public-server>:2087
+- Mail: https://<ip-public-server>:2095

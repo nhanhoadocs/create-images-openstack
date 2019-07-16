@@ -107,6 +107,12 @@ sudo apt-get dist-upgrade
 
 ![](../images/kvm/snap.png)
 
+## Bước bổ sung: Thao tác cài đặt các APP cần thiết cho việc đóng APP
+
+- Cài đặt DA 
+- Cài đặt Plesk
+- Cài đặt WHM
+
 ## Bước 4: Cấu hình để instance nhận metadata từ datasource
 
 **Cài đặt cloud-init, cloud-utils và cloud-initramfs-growroot**
@@ -128,12 +134,18 @@ Thay đổi file `/etc/cloud/cloud.cfg` để chỉ định user nhận ssh keys
 sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 ```
 
+## Bước 5 Bổ sung
+Xử lý phần wait 120s khi boot trên Ubuntu14
+``` sh
+sed -i 's/dowait 120/dowait 3/g' /etc/init/cloud-init-nonet.conf
+```
+
 ## Bước 6: Xóa bỏ thông tin của địa chỉ MAC
 
 Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
 ```sh 
-echo '#' > /lib/udev/rules.d/75-persistent-net-generator.rules
-echo '#' > /etc/udev/rules.d/70-persistent-net.rules
+echo > /lib/udev/rules.d/75-persistent-net-generator.rules
+echo > /etc/udev/rules.d/70-persistent-net.rules
 ```
 
 Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
@@ -142,7 +154,10 @@ Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: khôn
 
 ```sh
 sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=""|GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"|g' /etc/default/grub
-# Lưu lại config
+```
+
+Lưu lại config 
+```sh 
 update-grub
 ```
 
@@ -193,14 +208,18 @@ QEMU Guest Agent 2.5.0
 
 ## Bước 11: Cấu hình card mạng tự động active khi hệ thống boot-up
 
+Kiểm tra file `/etc/network/interfaces` chắc chắn cấu hình của `eth0` là `dhcp`
 ``` sh
-vim /etc/network/interfaces
+cat /etc/network/interfaces
 
 auto lo
 iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
+...
+EOF
 ```
+> Lưu ý: Sub interface eth0:1 được tạo ra khi đóng các app (DirectAdmin) thì để nguyên ko chỉnh sửa 
 
 ## Bước 12: Tắt máy ảo
 
@@ -214,23 +233,17 @@ init 0
 virt-sysprep -d ubuntu14.04
 ```
 
-## Bước 14: Undefine libvirt domain
-
-```
-virsh undefine ubuntu14.04
-```
-
-## Bước 15: Giảm kích thước máy ảo
+## Bước 14: Giảm kích thước máy ảo
 
 ```sh
-virt-sparsify --compress /tmp/ubuntu14.qcow2 /root/ubuntu14.img
+virt-sparsify --compress /var/lib/libvirt/images/ubuntu14.qcow2 /root/ubuntu14.img
 ```
 
 **Lưu ý:**
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 16: Upload image lên glance
+## Bước 15: Upload image lên glance
 
 - Copy image tới máy CTL, sử dụng câu lệnh sau
 

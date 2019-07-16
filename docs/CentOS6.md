@@ -280,10 +280,11 @@ yum install cloud-utils-growpart dracut-modules-growroot cloud-init -y
 rpm -qa kernel | sed 's/^kernel-//'  | xargs -I {} dracut -f /boot/initramfs-{}.img {}
 ```
 
-- Cấu hình grub để đẩy log ra console `vi /boot/grub/grub.conf`
+- Cấu hình grub để đẩy log ra console
 
 ``` sh 
-Thay thế `rhgb quiet` bằng `console=tty0 console=ttyS0,115200n8`
+sed -Ei "s/rhgb/console=tty0/g" /boot/grub/grub.conf
+sed -Ei "s/quiet/console=ttyS0,115200n8/g" /boot/grub/grub.conf
 ```
 
 - Để máy ảo trên OpenStack có thể nhận được Cloud-init cần thay đổi cấu hình mặc định bằng cách sửa đổi file `/etc/cloud/cloud.cfg`. 
@@ -294,16 +295,24 @@ sed -i 's/ssh_pwauth:   0/ssh_pwauth:   1/g' /etc/cloud/cloud.cfg
 sed -i 's/name: centos/name: root/g' /etc/cloud/cloud.cfg
 ```
 
-- Để sau khi boot máy ảo có thể nhận đủ các NIC gắn vào
 
-``` sh 
-yum install netplug wget  -y
-wget https://raw.githubusercontent.com/uncelvel/create-images-openstack/master/scripts_all/netplug_centos6 -O netplug
-# Đưa file vào `/etc/netplug`
-rm -rf /etc/netplug.d/netplug
-mv netplug /etc/netplug.d/netplug
-chmod +x /etc/netplug.d/netplug
+- Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
+
+```sh 
+cat << EOF >> /etc/rc.local
+for iface in \$(ip -o link | cut -d: -f2 | tr -d ' ' | grep ^eth)
+do
+   test -f /etc/sysconfig/network-scripts/ifcfg-\$iface
+   if [ \$? -ne 0 ]
+   then
+       touch /etc/sysconfig/network-scripts/ifcfg-\$iface
+       echo -e "DEVICE=\$iface\nBOOTPROTO=dhcp\nONBOOT=yes" > /etc/sysconfig/network-scripts/ifcfg-\$iface
+       ifup \$iface
+   fi
+done
+EOF
 ```
+
 
 - Disable Default routing (để VM có thể nhận metadata từ Cloud-init nhanh hơn)
 

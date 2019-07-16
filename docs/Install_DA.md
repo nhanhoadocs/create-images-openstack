@@ -27,15 +27,33 @@ screen -rd DA
 rm -rf setup.sh
 ```
 
-4.2 Cấu hình DA
+- Truy cập 
+http://<ip-public-server>:2222
 
-Sau khi cài đặt DA tiến hành cấu hình cho DA trước khi đóng Template
+4.2 Cấu hình DA đa phiên bản PHP 5.6 và PHP 7.0 Quý làm theo các bước sau:
 
-- Chuyển PHP version vể 5.6 
+Bước 1:
+```sh 
+cd /usr/local/directadmin/custombuild
+./build set php1_mode php-fpm
+./build set php2_mode php-fpm
+./build set php1_release 5.6
+./build set php2_release 7.0
 ```
 
-```
+> Lưu ý: với cách cấu hình này thì PHP sẽ chạy ở mode PHP-FPM.
 
+Bước 2: recompile software
+```
+./build php n
+./build rewrite_confs
+```
+> Để quá trình cài đặt không bị gián đoạn nên cài đặt trong chế độ screen.
+
+Bước 3: Sau khi cài đặt hoàn tất thì đã có thể chọn phiên bản PHP trên DirectAdmin bằng cách truy cập 
+Domain Setup --> Chọn Domain và kéo xuống dưới để cấu hình
+
+![](../images/check_images/DA-php.png)
 - Security DA
 ```
 

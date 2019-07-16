@@ -45,6 +45,33 @@ Trong quá trình boot VM tiến hành truy cập tab `log` xem có log MV hiể
 
 Bước này chúng ta kiểm tra hoạt động của các app trên VM sau khi running như DA, Plesk, WHM
 
+# Edit images sau khi đóng Template
+
+Cài đặt libguest tools
+```sh 
+yum install -y libguestfs || apt-get install -y libguestfs-tools
+```
+
+Chỉnh sửa Images
+```sh 
+root@nhcephbka02:/var/lib/libvirt/images# guestfish --rw -a  u16-qemuagent.img 
+
+Welcome to guestfish, the guest filesystem shell for
+editing virtual machine filesystems and disk images.
+
+Type: 'help' for help on commands
+      'man' to read the manual
+      'quit' to quit the shell
+
+><fs> run
+
+ 100% ⟦▒▒▒▒▒▒▒▒▒▒▒▒⟧ 00:00
+><fs> list-filesystems
+/dev/sda1: ext4
+><fs> mount /dev/sda1 /
+
+```
+
 # Đổi thông tin DA sau khi tạo VM từ Template
 
 - Login vào VM 
@@ -63,6 +90,13 @@ cd /usr/local/directadmin/scripts
 ./ipswap.sh 192.168.122.36 <ip-public-server>
 ```
 
+- Chạy script get License
+```sh 
+cd /usr/local/directadmin/scripts
+./getLicense.sh
+service directadmin restart || systemctl restart directadmin
+```
+
 - Reboot
 ```sh 
 init 6 
@@ -78,13 +112,13 @@ http://<ip-public-server>:2222
 
 # Đổi thông tin IP WHM sau khi tạo VM từ Template
 
-CentOS6
+CentOS
 ``` sh
 # Update license Cpanel
 /usr/local/cpanel/cpkeyclt
 
-# CentOS6
-192.168.122.109
+IP=$(ip a | grep 255 | awk '{print $2}' | cut -d '/' -f1)
+
 # Replace IP
 Example: 
 replace 123.30.145.16 103.28.36.104 -- /var/cpanel/mainip 
@@ -92,36 +126,11 @@ replace 123.30.145.16 103.28.36.104 -- /etc/hosts
 replace 123.30.145.16 103.28.36.104 -- /etc/wwwacct.conf
 replace 123.30.145.16 103.28.36.104 -- /usr/local/apache/conf/httpd.conf
 
-IP=$(ip a | grep 255 | awk '{print $2}' | cut -d '/' -f1)
-
-<VirtualHost 192.168.122.109:443 127.0.0.1:443 *:443> /usr/local/apache/conf/httpd.conf
-ADDR 192.168.122.109 /etc/wwwacct.conf
-192.168.122.109		cpanel.localhost.localdomain cpanel /etc/hosts
-192.168.122.109 /var/cpanel/mainip
-# Restart Services
-service named restart
-service httpd restart
 ```
 
-CentOS7 
-```sh
-<VirtualHost 192.168.122.109:443 127.0.0.1:443 *:443> /usr/local/apache/conf/httpd.conf
-ADDR 192.168.122.39 /etc/wwwacct.conf
-192.168.122.39		cpanel.localhost.localdomain cpanel /etc/hosts
-192.168.122.39 /var/cpanel/mainip
-
-
-# Restart Services
-systemctl restart named
-systemctl restart httpd
-# Reboot server
-init 6 
-
-# Edit hostname if not match
-File /etc/wwwacct.conf
-Example:
-HOST share62-r3.nhanhoa.com
-# Reboot server
+Thông tin đăng nhập MySQL 
+```sh 
+cat /root/.my.cnf
 ```
 
 Truy cập 
@@ -131,16 +140,6 @@ Truy cập
 
 # Đổi thông tin IP Plesk sau khi tạo VM từ Template
 
-Đổi thông tin IP Plesk
-
-![](images/Plesk change IP.png)
-
-![](images/Plesk change IP.png)
-
-Đổi thông tin password của MSSQL
-
-
-
 Đổi thông tin password đăng nhập Plesk
 
 ```
@@ -149,6 +148,11 @@ https://support.plesk.com/hc/en-us/articles/115001761193-How-to-change-the-IP-ad
 https://docs.plesk.com/en-US/12.5/advanced-administration-guide-win/system-maintenance/changing-ip-addresses.49727/
 ```
 
+Đăng nhập MySQL 
+```sh 
+plesk db
+```
+
 Truy cập 
-- Plesk: https://<ip-public-server>:2083
+- Plesk: https://<ip-public-server>:8443
 
