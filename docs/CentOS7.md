@@ -12,7 +12,7 @@
 
 ----------------------
 
-## Bước 1:Trên KVM host tạo máy ảo CentOS6
+## Bước 1:Trên KVM host tạo máy ảo CentOS7
 
 - Đăng nhập ssh vào Node KVM bật `virt-manager`
 ```sh
