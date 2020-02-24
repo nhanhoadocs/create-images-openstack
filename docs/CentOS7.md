@@ -180,9 +180,9 @@ với `centos*` là tên máy ảo
 ```
 yum install epel-release -y
 yum update -y
+```
 
 - Stop firewalld Disable Selinux
-
 ``` sh
 systemctl disable firewalld
 systemctl stop firewalld
@@ -194,7 +194,6 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
-init 6
 ```
 
 - Disable IPv6
@@ -337,6 +336,8 @@ yum clean all
 # Xóa last logged
 rm -f /var/log/wtmp /var/log/btmp
 # Xóa history 
+rm -f /root/.bash_history
+> /var/log/cmdlog.log
 history -c
 ```
 
@@ -350,11 +351,12 @@ poweroff
 
 ``` sh
 # Xóa bỏ MAC address details
-virt-sysprep -d centos7.0
+virt-sysprep -d OPS_Template_CentOS7
 
 # Giảm kích thước image
-virt-sparsify --compress /var/lib/libvirt/images/centos7.qcow2 CentOS7-64bit-2018.img
+virt-sparsify --compress /var/lib/libvirt/images/OPS_Template_CentOS7.qcow2 CentOS7.qcow2
 ```
+
 
 ## Bước 6: Upload image lên glance
 
