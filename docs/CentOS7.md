@@ -330,7 +330,6 @@ rm -f /etc/hostname
 ```
 
 - Clean all 
-
 ``` sh 
 yum clean all
 # Xóa last logged
@@ -362,16 +361,16 @@ virt-sparsify --compress /var/lib/libvirt/images/OPS_Template_CentOS7.qcow2 Cent
 
 - Copy Images sang Node Controller
 ```sh
-scp CentOS7-64bit-2018.img root@<controller_host>:/root/
+scp CentOS7.qcow2 root@<controller_host>:/root/
 ```
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
-``` sh
-glance image-create --name CentOS7-64bit-2018 \
+```sh
+glance image-create --name CentOS7.qcow2 \
 --disk-format qcow2 \
 --container-format bare \
---file /root/CentOS7-64bit-2018.img \
+--file /root/CentOS7.qcow2 \
 --visibility=public \
 --property hw_qemu_guest_agent=yes \
 --progress
