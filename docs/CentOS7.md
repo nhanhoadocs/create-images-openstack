@@ -217,6 +217,11 @@ sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 systemctl restart sshd 
 ```
 
+- Cài đặt CMDlog
+```sh 
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
+```
+
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
 - Shutdown VM 
