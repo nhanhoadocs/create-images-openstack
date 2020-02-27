@@ -180,9 +180,9 @@ với `centos*` là tên máy ảo
 ```
 yum install epel-release -y
 yum update -y
+```
 
 - Stop firewalld Disable Selinux
-
 ``` sh
 systemctl disable firewalld
 systemctl stop firewalld
@@ -194,7 +194,6 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
-init 6
 ```
 
 - Disable IPv6
@@ -216,6 +215,11 @@ chmod +x /usr/sbin/dhclient-script
 ```sh
 sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config 
 systemctl restart sshd 
+```
+
+- Cài đặt CMDlog
+```sh 
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
@@ -331,12 +335,13 @@ rm -f /etc/hostname
 ```
 
 - Clean all 
-
 ``` sh 
 yum clean all
 # Xóa last logged
 rm -f /var/log/wtmp /var/log/btmp
 # Xóa history 
+rm -f /root/.bash_history
+> /var/log/cmdlog.log
 history -c
 ```
 
@@ -350,26 +355,27 @@ poweroff
 
 ``` sh
 # Xóa bỏ MAC address details
-virt-sysprep -d centos7.0
+virt-sysprep -d OPS_Template_CentOS7
 
 # Giảm kích thước image
-virt-sparsify --compress /var/lib/libvirt/images/centos7.qcow2 CentOS7-64bit-2018.img
+virt-sparsify --compress /var/lib/libvirt/images/OPS_Template_CentOS7.qcow2 CentOS7.qcow2
 ```
+
 
 ## Bước 6: Upload image lên glance
 
 - Copy Images sang Node Controller
 ```sh
-scp CentOS7-64bit-2018.img root@<controller_host>:/root/
+scp CentOS7.qcow2 root@<controller_host>:/root/
 ```
 
 - Di chuyển image tới máy CTL, sử dụng câu lệnh sau
 
-``` sh
-glance image-create --name CentOS7-64bit-2018 \
+```sh
+glance image-create --name CentOS7.qcow2 \
 --disk-format qcow2 \
 --container-format bare \
---file /root/CentOS7-64bit-2018.img \
+--file /root/CentOS7.qcow2 \
 --visibility=public \
 --property hw_qemu_guest_agent=yes \
 --progress
