@@ -222,6 +222,14 @@ systemctl restart sshd
 curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
 ```
 
+- Cài đặt Chronyd 
+```sh
+yum install chrony -y
+sed -i 's|server 1.centos.pool.ntp.org iburst|server 103.101.161.201 iburst|g' /etc/chrony.conf
+systemctl enable --now chronyd 
+hwclock --systohc
+```
+
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
 - Shutdown VM 
