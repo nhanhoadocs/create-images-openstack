@@ -197,6 +197,11 @@ rm -rf /home/ubuntu
 dpkg-reconfigure tzdata
 ```
 
+Bổ sung env locale 
+```sh 
+echo "export LC_ALL=C" >>  ~/.bashrc
+```
+
 Disable ipv6
 ```sh
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 

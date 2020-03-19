@@ -181,14 +181,20 @@ rm -rf /home/ubuntu
 
 Update 
 ```sh
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
+sudo apt-get update -y 
+sudo apt-get upgrade -y 
+sudo apt-get dist-upgrade -y
+sudo apt-get autoremove 
 ```
 
 Đổi timezone về `Asia/Ho_Chi_Minh`
 ```sh
 dpkg-reconfigure tzdata
+```
+
+Bổ sung env locale 
+```sh 
+echo "export LC_ALL=C" >>  ~/.bashrc
 ```
 
 Disable ipv6
