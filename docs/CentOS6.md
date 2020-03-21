@@ -233,6 +233,20 @@ init 6
 yum -y install wget vim 
 ```
 
+- Cài đặt CMDlog
+```sh 
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
+```
+
+- Cài đặt Chronyd 
+```sh
+yum install chrony -y
+sed -i 's|server 0.rhel.pool.ntp.org iburst|pool 103.101.161.201 iburst|g' /etc/chrony.conf
+chkconfig chronyd on 
+service chronyd start
+hwclock --systohc
+```
+
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
 - Shutdown VM 

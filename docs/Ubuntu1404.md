@@ -78,6 +78,11 @@ rm -rf /home/ubuntu
 dpkg-reconfigure tzdata
 ```
 
+Bổ sung env locale 
+```sh 
+echo "export LC_ALL=C" >>  ~/.bashrc
+```
+
 Disable ipv6
 ```sh
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 
@@ -92,9 +97,10 @@ cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 
 Update 
 ```sh
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
+sudo apt-get update -y 
+sudo apt-get upgrade -y 
+sudo apt-get dist-upgrade -y
+sudo apt-get autoremove 
 ```
 
 ==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết

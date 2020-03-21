@@ -12,7 +12,7 @@
 
 ## Bước 1: Tạo máy ảo bằng virt-manager
 
-Các bước tạo tương tự Ubuntu12
+Các bước tạo tương tự [Ubuntu12](Ubuntu1204.md)
 
 ## Bước 2 : Tắt máy ảo, xử lí trên KVM host
 
@@ -77,6 +77,11 @@ rm -rf /home/ubuntu
 dpkg-reconfigure tzdata
 ```
 
+Bổ sung env locale 
+```sh 
+echo "export LC_ALL=C" >>  ~/.bashrc
+```
+
 Disable ipv6
 ```sh
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf 
@@ -89,14 +94,55 @@ cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 # Output: 1: OK, 0: NotOK
 ```
 
-Update 
-```sh
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
+- Cài đặt CMDlog
+```sh 
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
 ```
 
-==> SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
+- Cài đặt Chronyd 
+```sh
+apt install chrony -y
+sed -i 's|pool 2.debian.pool.ntp.org offline iburst|pool 103.101.161.201 offline iburst|g' /etc/chrony/chrony.conf
+service chrony restart
+hwclock --systohc
+```
+
+Update 
+```sh
+sudo apt-get update -y 
+sudo apt-get upgrade -y 
+sudo apt-get dist-upgrade -y
+sudo apt-get autoremove 
+```
+
+Cấu hình để đổi name Card mạng về eth* thay vì ens, eno (Để scripts netplug chạy ổn định)
+```sh
+sed -i 's|GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"|g' /etc/default/grub
+```
+
+Lưu lại config 
+```sh 
+update-grub
+```
+
+Reboot VM 
+```sh 
+init 6
+```
+
+Login ***Console** và chỉnh card mạng về đúng `eth0` trong `/etc/network/interfaces`
+```sh 
+sed -Ei 's|ens3|eth0|g' /etc/network/interfaces
+```
+
+![](../images/ubuntu16/interface.png)
+
+Thực hiện restart network 
+```sh 
+/etc/init.d/networking restart 
+```
+
+> ## ==> Tắt máy và SNAPSHOT lại KVM host để lưu trữ và đóng gói lại khi cần thiết
 
 - Shutdown VM 
 
@@ -119,9 +165,12 @@ apt-get install cloud-utils cloud-initramfs-growroot cloud-init -y
 dpkg-reconfigure cloud-init
 ```
 
-Sau khi màn hình mở ra, lựa chọn `EC2`
-```sh
-# Disable Warning đối với EC2 trên Ubuntu 16
+Sau khi màn hình mở ra, lựa chọn `EC2` bỏ các option khác 
+
+![](../images/ubuntu16/cloudinit.png)
+
+Disable Warning đối với EC2 trên Ubuntu 16
+```sh 
 touch /root/.cloud-warnings.skip
 ```
 
@@ -135,13 +184,12 @@ sed -i 's/name: ubuntu/name: root/g' /etc/cloud/cloud.cfg
 
 ## Bước 7: Xóa bỏ thông tin của địa chỉ MAC
 
-Xóa nội dung file (file này được gen bởi file trước) bằng các sử dụng `:%d`  trong `vi`.
+Xóa nội dung file net rules 
 ```sh 
 echo > /lib/udev/rules.d/75-persistent-net-generator.rules
 echo > /etc/udev/rules.d/70-persistent-net.rules
 ```
-
-Bạn cũng có thể thay thế file trên bằng 1 file rỗng. Lưu ý: không được xóa bỏ hoàn toàn file mà chỉ xóa nội dung.
+> Không xóa file 
 
 ## Bước 8: Cấu hình để instance báo log ra console
 
@@ -155,34 +203,7 @@ update-grub
 ```
 
 
-## Bước 9: Cấu hình để đổi name Card mạng về eth* thay vì ens, eno (Để scripts netplug chạy ổn định)
-
-```sh
-sed -i 's|GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"|g' /etc/default/grub
-```
-
-Lưu lại config 
-```sh 
-update-grub
-```
-
-## Bước 10: Reboot lại VM và chỉnh lại card mạng 
-
-Reboot VM 
-```sh 
-init 6
-```
-
-Login Console và chỉnh card mạng về đúng `eth0` trong `/etc/network/interfaces`
-```sh 
-auto lo
-iface lo inet loopback
-auto eth0
-iface eth0 inet ....
-
-```
-
-## Bước 11: Cài đặt netplug để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
+## Bước 09: Cài đặt netplug để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
 
 ``` sh
 apt-get install netplug -y
@@ -191,13 +212,13 @@ mv netplug /etc/netplug/netplug
 chmod +x /etc/netplug/netplug
 ```
 
-## Bước 12: Disable default config route
+## Bước 10: Disable default config route
 
 ```sh
 sed -i 's|link-local 169.254.0.0|#link-local 169.254.0.0|g' /etc/networks
 ```
 
-## Bước 13: Cài đặt qemu-guest-agent
+## Bước 11: Cài đặt qemu-guest-agent
 
 
 Chú ý: qemu-guest-agent là một daemon chạy trong máy ảo, giúp quản lý và hỗ trợ máy ảo khi cần (có thể cân nhắc việc cài thành phần này lên máy ảo)
@@ -225,7 +246,7 @@ QEMU Guest Agent 2.5.0
 * qemu-ga is running
 ```
 
-## Bước 14: Cấu hình card mạng về dhcp để tự động active khi hệ thống boot-up
+## Bước 12: Cấu hình card mạng về dhcp để tự động active khi hệ thống boot-up
 
 Chỉnh sửa file `/etc/network/interfaces` cấu hình eth0 nhận dhcp
 ``` sh
@@ -240,20 +261,20 @@ EOF
 ```
 > Lưu ý: Sub interface khi đóng các app nếu sinh ra
 
-## Bước 15: Tắt máy ảo
+## Bước 13: Tắt máy ảo
 
 ```sh
 init 0
 ```
 
-## Bước 16: Clean up image
+## Bước 14: Clean up image
 
 ```sh
 virt-sysprep -d ubuntu16
 ```
 
 
-## Bước 17: Giảm kích thước máy ảo
+## Bước 15: Giảm kích thước máy ảo
 
 ```sh
 virt-sparsify --compress /var/lib/libvirt/images/ubuntu16.qcow2 /root/ubuntu16.img
@@ -263,7 +284,7 @@ virt-sparsify --compress /var/lib/libvirt/images/ubuntu16.qcow2 /root/ubuntu16.i
 
 Nếu img bạn sử dụng đang ở định dạng raw thì bạn cần thêm tùy chọn `--convert qcow2` để giảm kích thước image.
 
-## Bước 18: Upload image lên glance
+## Bước 16: Upload image lên glance
 
 - Copy image tới máy CTL, sử dụng câu lệnh sau
 
