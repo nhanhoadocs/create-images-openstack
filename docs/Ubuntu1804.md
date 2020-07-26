@@ -302,6 +302,12 @@ Cài đặt các Sofware phần mềm cần thiết (Nếu có )
 
 ### Login vào VM bằng User ROOT
 
+### Cài đặt CMD LOG
+
+```
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
+```
+
 ### 2.2.Để máy ảo khi boot sẽ tự giãn phân vùng theo dung lượng mới, ta cài các gói sau:
 ```
 sudo apt-get install cloud-utils cloud-initramfs-growroot -y
@@ -383,6 +389,7 @@ systemctl status cloud-init
 apt-get clean all
 rm -f /var/log/wtmp /var/log/btmp
 history -c
+> /var/log/cmdlog.log
 ```
 
  - Shutoff máy
