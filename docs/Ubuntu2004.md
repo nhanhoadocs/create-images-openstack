@@ -372,11 +372,20 @@ qemu-ga --version
 service qemu-guest-agent status
 ```
 
+### Bước 4: Cài đặt CMD Log
+
+```
+curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
+```
+
+### Bước 5: Dọn dẹp
+
 Clear toàn bộ history
 ```
 apt-get clean all
 rm -f /var/log/wtmp /var/log/btmp
 history -c
+> /var/log/cmdlog.log
 ```
 
 Tắt VM
