@@ -307,8 +307,9 @@ Lưu ý
 ### Bước 1: Cấu hình netplug
 
 Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
-apt-get install netplug -y
 ```
+apt-get install netplug -y
+
 wget https://raw.githubusercontent.com/danghai1996/thuctapsinh/master/HaiDD/CreateImage/scripts/netplug_ubuntu -O netplug
 
 mv netplug /etc/netplug/netplug
