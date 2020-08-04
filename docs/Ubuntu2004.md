@@ -378,7 +378,63 @@ service qemu-guest-agent status
 curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
 ```
 
-### Bước 5: Dọn dẹp
+### Bước 5: Xử lý snap full 100%
+Kiểm tra snap:
+```
+mount|grep snap
+
+/var/lib/snapd/snaps/lxd_14804.snap on /snap/lxd/14804 type squashfs (ro,nodev,relatime,x-gdu.hide)
+/var/lib/snapd/snaps/core18_1705.snap on /snap/core18/1705 type squashfs (ro,nodev,relatime,x-gdu.hide)
+/var/lib/snapd/snaps/snapd_7264.snap on /snap/snapd/7264 type squashfs (ro,nodev,relatime,x-gdu.hide)
+tmpfs on /run/snapd/ns type tmpfs (rw,nosuid,nodev,noexec,relatime,size=203536k,mode=755)
+/var/lib/snapd/snaps/core18_1880.snap on /snap/core18/1880 type squashfs (ro,nodev,relatime,x-gdu.hide)
+/var/lib/snapd/snaps/snapd_8542.snap on /snap/snapd/8542 type squashfs (ro,nodev,relatime,x-gdu.hide)
+/var/lib/snapd/snaps/lxd_16530.snap on /snap/lxd/16530 type squashfs (ro,nodev,relatime,x-gdu.hide)
+nsfs on /run/snapd/ns/lxd.mnt type nsfs (rw)
+```
+
+Stop và disable Snap service
+```
+systemctl stop snapd
+systemctl disable snapd
+```
+
+Umount tất cả các đường dẫn sau `on`
+```
+umount /snap/lxd/14804
+umount /snap/core18/1705
+umount /snap/snapd/7264
+umount /run/snapd/ns
+umount /snap/core18/1880
+umount /snap/snapd/8542
+umount /snap/lxd/16530
+umount /run/snapd/ns/lxd.mnt
+```
+
+Xóa các đường dẫn ở trên:
+```
+rm -rf /snap/lxd/14804
+rm -rf /snap/core18/1705
+rm -rf /snap/snapd/7264
+rm -rf /run/snapd/ns
+rm -rf /snap/core18/1880
+rm -rf /snap/snapd/8542
+rm -rf /snap/lxd/16530
+rm -rf /run/snapd/ns/lxd.mnt
+```
+
+Xóa các file trong `/var/lib/snapd/snaps` ở trên:
+```
+rm -f /var/lib/snapd/snaps/lxd_14804.snap
+rm -f /var/lib/snapd/snaps/core18_1705.snap
+rm -f /var/lib/snapd/snaps/snapd_7264.snap
+rm -f /var/lib/snapd/snaps/core18_1880.snap
+rm -f /var/lib/snapd/snaps/snapd_8542.snap
+rm -f /var/lib/snapd/snaps/lxd_16530.snap
+```
+
+
+### Bước 6: Dọn dẹp
 
 Clear toàn bộ history
 ```
@@ -393,7 +449,7 @@ Tắt VM
 init 0
 ```
 
-### Bước 4: Tắt VM và tạo Snapshot (U20Blank)
+### Bước 7: Tắt VM và tạo Snapshot (U20Blank)
 
 ![](../images/ubuntu20/pic27.png)
 
