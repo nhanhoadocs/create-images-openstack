@@ -317,8 +317,47 @@ mv netplug /etc/netplug/netplug
 chmod +x /etc/netplug/netplug
 ```
 
-### Bước 2: Thiết lập gói cloud-init
+### Bước 2: Disable snapd service
+Kiểm tra snap:
+```
+df -H
+```
 
+![](../images/ubuntu20/pic29.png)
+
+List danh sách snap
+```
+snap list
+```
+![](../images/ubuntu20/pic30.png)
+
+Để xóa, ta sử dụng lệnh `snap remove <package>`: `lxd` -> `core18` -> `snapd`
+```
+snap remove lxd
+snap remove core18
+snap remove snapd
+```
+
+Remove snapd package
+```
+apt purge snapd -y
+```
+
+Xóa các thự mục snap
+```
+rm -rf ~/snap
+rm -rf /snap
+rm -rf /var/snap
+rm -rf /var/lib/snapd
+```
+
+Kiểm tra lại:
+```
+df -H
+```
+![](../images/ubuntu20/pic30.png)
+
+### Bước 3: Thiết lập gói cloud-init
 Cài đặt cloud-init
 ```
 apt-get install -y cloud-init
@@ -353,7 +392,7 @@ systemctl status cloud-init
 
 Lưu ý: Việc restart có thể mất 2-3 phút hoặc hơn (Nếu quá lâu có thể bỏ qua bước restart cloud-init)
 
-### Bước 3: Cài đặt qemu-agent
+### Bước 4: Cài đặt qemu-agent
 
 Chú ý: qemu-guest-agent là một daemon chạy trong máy ảo, giúp quản lý và hỗ trợ máy ảo khi cần (có thể cân nhắc việc cài thành phần này lên máy ảo)
 
@@ -372,13 +411,13 @@ qemu-ga --version
 service qemu-guest-agent status
 ```
 
-### Bước 4: Cài đặt CMD Log
+### Bước 5: Cài đặt CMD Log
 
 ```
 curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/ghichep-cmdlog/master/cmdlog.sh | bash
 ```
 
-### Bước 5: Dọn dẹp
+### Bước 6: Dọn dẹp
 
 Clear toàn bộ history
 ```
@@ -393,7 +432,7 @@ Tắt VM
 init 0
 ```
 
-### Bước 4: Tắt VM và tạo Snapshot (U20Blank)
+### Bước 7: Tắt VM và tạo Snapshot (U20Blank)
 
 ![](../images/ubuntu20/pic27.png)
 
