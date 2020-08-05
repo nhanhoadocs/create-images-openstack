@@ -351,6 +351,12 @@ rm -rf /var/snap
 rm -rf /var/lib/snapd
 ```
 
+Kiểm tra lại:
+```
+df -H
+```
+![](../images/ubuntu20/pic30.png)
+
 ### Bước 3: Thiết lập gói cloud-init
 Cài đặt cloud-init
 ```
