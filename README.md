@@ -20,6 +20,8 @@
 
 [- Đóng Images Ubuntu1804](docs/Ubuntu1804.md)
 
+[- Đóng Images Ubuntu2004](docs\Ubuntu2004.md)
+
 
 ## Windows
 
