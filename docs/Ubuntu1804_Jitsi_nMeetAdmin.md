@@ -129,14 +129,14 @@
     apt-get autoremove -y
     ```
 
-- Cấu hình để instance báo log ra console và đổi name Card mạng về eth* thay vì ens, eno
+- Cấu hình để instance báo log ra console và đổi name Card mạng về `eth*` thay vì `ens`, `eno`
     ```
     sed -i 's|GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 console=tty1 console=ttyS0"|g' /etc/default/grub
 
     update-grub
     ```
 
-### 2.1. Cấu hình network sử dụng ifupdown thay vì netplan
+### 2.1. Cấu hình network sử dụng `ifupdown` thay vì `netplan`
 - Disable netplan
     ```
     apt-get --purge remove netplan.io -y
@@ -157,7 +157,7 @@
     EOF
     ```
 
-- Reboot máy, kiểm tra card eth0
+- Reboot máy, kiểm tra card `eth0`
 
 ### 2.2. Để sau khi boot máy ảo, có thể nhận đủ các NIC gắn vào:
 ```
@@ -236,7 +236,7 @@ Kiểm tra:
 java -version
 ```
 
-Cấu hình môi trường JAVA_HOME
+Cấu hình môi trường `JAVA_HOME`
 ```
 echo "JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")" | sudo tee -a /etc/profile
 source /etc/profile
@@ -260,12 +260,12 @@ sudo sh -c "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.lis
 sudo apt update -y
 ```
 
-Cài đặt Jitsi theo phiên bản đã định sẵn ở trên:
+Cài đặt Jitsi theo phiên bản các service đã định sẵn ở trên:
 ```
 apt-get install jicofo=1.0-541-1 jitsi-meet=2.0.4384-1 jitsi-meet-prosody=1.0.3969-1 jitsi-meet-turnserver=1.0.3969-1 jitsi-meet-web=1.0.3969-1 jitsi-meet-web-config=1.0.3969-1 jitsi-videobridge2=2.1-164-gfdce823f-1 -y
 ```
 
-Trong quá trình cài đặt, sẽ được yêu cầu điền hostname. Tại đó, điền IP máy chủ
+Trong quá trình cài đặt, sẽ được yêu cầu điền hostname. Tại đó, điền IP của máy ảo.
 
 Sau đó, ta sẽ được hỏi về SSL cert: -> Chọn `Generate a new self-signed certificate (You will later get a chance to obtain a Let’s Encrypt certificate)`
 
