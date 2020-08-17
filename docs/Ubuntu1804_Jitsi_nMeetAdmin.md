@@ -30,6 +30,8 @@
 - Tiến hành cài đặt Ubuntu 18.04 LTS như bình thường
 - Sau khi cài đặt xong, ta tiến hành sang bước đóng image
 
+> ## Snapshot VM -> Ubuntu 18.04 Begin
+
 # I. Thực hiện trên VM
 ## 1. Thiết lập cơ bản
 ### Setup cơ bản Ubuntu:
