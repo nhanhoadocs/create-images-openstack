@@ -20,8 +20,9 @@
 
 [- Đóng Images Ubuntu1804](docs/Ubuntu1804.md)
 
-[- Đóng Images Ubuntu2004](docs\Ubuntu2004.md)
+[- Đóng Images Ubuntu2004](docs/Ubuntu2004.md)
 
+[- Đóng image Ubuntu1804-Jitsi-nMeetAdmin](docs/Ubuntu1804_Jitsi_nMeetAdmin.md)
 
 ## Windows
 
