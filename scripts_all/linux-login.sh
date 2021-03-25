@@ -1,6 +1,5 @@
 #!/bin/bash
 
-clear
 echo ""
 echo "Welcome to Cloud365 | nhanhoa.com"
 echo ""
